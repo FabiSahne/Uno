@@ -1,4 +1,12 @@
-@main def hello(): Unit =
-  println(msg)
+object Main {
+  def main(args: Array[String]): Unit = {
 
-def msg = "“When do you think people die? When they are shot through the heart by the bullet of a pistol? No. When they are ravaged by an incurable disease? No. When they drink a soup made from a poisonous mushroom!? No! It’s when… they are forgotten.”"
+    case class Player(name: String, score: Int)
+
+    val player1 = Player("Alice", 10)
+    val player2 = Player("Bob", 20)
+
+    println(s"Player 1: ${player1.name}, Score: ${player1.score}")
+    println(s"Player 2: ${player2.name}, Score: ${player2.score}")
+  }
+}
