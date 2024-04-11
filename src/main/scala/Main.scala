@@ -6,7 +6,7 @@ object Main {
     val player1 = Player("Alice", 10)
     val player2 = Player("Bob", 20)
 
-    println(s"Player 1: ${player1.name}")
-    println(s"Player 2: ${player2.name}")
+    println(s"Player 1: ${player1.name}, Score: ${player1.score}")
+    println(s"Player 2: ${player2.name}, Score: ${player2.score}")
   }
 }
