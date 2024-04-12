@@ -21,9 +21,9 @@ enum cardValues:
   case WILD
   case WILD_DRAW_FOUR
 
-case class Card(color: cardColors, value: cardValues)
-
-// can card be played
-def canPlayCard(card: Card, topCard: Card): Boolean = {
-  card.color == topCard.color || card.value == topCard.value || card.value == cardValues.WILD || card.value == cardValues.WILD_DRAW_FOUR
+case class Card(color: cardColors, value: cardValues) {
+  // can card be played
+  def canBePlayedOn(topCard: Card): Boolean = {
+    this.color == topCard.color || this.value == topCard.value || this.value == cardValues.WILD || this.value == cardValues.WILD_DRAW_FOUR
+  }
 }
