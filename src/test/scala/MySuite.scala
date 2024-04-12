@@ -9,9 +9,9 @@ class MySuite extends munit.FunSuite {
     val c3 = uno.Card(uno.cardColors.RED, uno.cardValues.TWO)
     val c4 = uno.Card(uno.cardColors.BLUE, uno.cardValues.TWO)
     // test can play card
-    assert(uno.canPlayCard(c2, c1))
-    assert(uno.canPlayCard(c3, c1))
-    assert(!uno.canPlayCard(c4, c1))
-    assert(uno.canPlayCard(c4, c3))
+    assert(c2.canBePlayedOn(c1))
+    assert(c3.canBePlayedOn(c3))
+    assert(!c4.canBePlayedOn(c1))
+    assert(c4.canBePlayedOn(c3))
   }
 }
