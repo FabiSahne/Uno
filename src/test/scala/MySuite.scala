@@ -23,5 +23,8 @@ class MySuite extends AnyWordSpec {
       val topCard2 = uno.Card(uno.cardColors.BLUE, uno.cardValues.THREE)
       assert(!p1.canPlay(topCard2))
     }
+    // create multiple little tests
+
+
   }
 }
