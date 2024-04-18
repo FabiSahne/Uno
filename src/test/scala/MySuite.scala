@@ -53,5 +53,36 @@ class MySuite extends AnyWordSpec {
       assert(c1.canBePlayedOn(c3))
       assert(c1.canBePlayedOn(c4))
     }
+
+    "allow a player to play a card that matches the color or value of the top card" in {
+      val hand = List(uno.Card(uno.cardColors.RED, uno.cardValues.ONE))
+      val player = uno.Player(0, hand)
+      val topCard = uno.Card(uno.cardColors.RED, uno.cardValues.TWO)
+      assert(player.canPlay(topCard))
+    }
+
+    "require a player to draw a card if they cannot play any of their cards" in {
+      val hand = List(uno.Card(uno.cardColors.RED, uno.cardValues.ONE))
+      val player = uno.Player(0, hand)
+      val topCard = uno.Card(uno.cardColors.BLUE, uno.cardValues.TWO)
+      assert(!player.canPlay(topCard))
+    }
+
+    "allow a player to play a Wild card on any turn" in {
+      val hand = List(uno.Card(uno.cardColors.RED, uno.cardValues.WILD))
+      val player = uno.Player(0, hand)
+      val topCard = uno.Card(uno.cardColors.BLUE, uno.cardValues.TWO)
+      assert(player.canPlay(topCard))
+    }
+
+    "reduce number of cards in player's hand after playing a card" in {
+      val hand = List(Card(cardColors.RED, cardValues.ONE), Card(cardColors.RED, cardValues.TWO))
+      val player = Player(0, hand)
+      val cardToPlay = Card(cardColors.RED, cardValues.ONE)
+      val initialHandSize = player.hand.length
+      val newPlayer = player.playCard(cardToPlay)
+
+      newPlayer.hand.length shouldBe (initialHandSize - 1)
+    }
   }
 }
