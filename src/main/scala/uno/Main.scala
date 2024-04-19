@@ -20,7 +20,7 @@ package uno
         case cardColors.GREEN => "\u001b[32m"
         case cardColors.YELLOW => "\u001b[33m"
         case cardColors.BLUE => "\u001b[34m"
-        case _ => "\u001b[0m" // default for wild cards
+        //case _ => "\u001b[0m" // default for wild cards
       }
       println(s"${index + 1}: $colorCode${card.value}\u001b[0m")
     }
@@ -31,7 +31,7 @@ package uno
     if (currentPlayer.canPlay(card)) {
       currentPlayer = currentPlayer.playCard(card).get // `get` unwraps the Player from the Option[Player]
       players = players.updated(currentPlayerIndex, currentPlayer)
-      println(s"Player ${currentPlayerIndex + 1} played ${card}")
+      println(s"Player ${currentPlayerIndex + 1} played $card")
     } else {
       println("You can't play that card. You lose your turn.")
     }
