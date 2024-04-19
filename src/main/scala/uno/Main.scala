@@ -29,7 +29,7 @@ package uno
     val cardNumber = scala.io.StdIn.readInt()
     val card = currentPlayer.hand(cardNumber - 1) // Subtract 1 because list indices start at 0
     if (currentPlayer.canPlay(card)) {
-      currentPlayer = currentPlayer.playCard(card)
+      currentPlayer = currentPlayer.playCard(card).get // `get` unwraps the Player from the Option[Player]
       players = players.updated(currentPlayerIndex, currentPlayer)
       println(s"Player ${currentPlayerIndex + 1} played ${card}")
     } else {

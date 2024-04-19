@@ -32,6 +32,7 @@ class MySuite extends AnyWordSpec with Matchers {
       val shuffledDeck = scala.util.Random.shuffle(originalDeck)
 
       shuffledDeck should not equal originalDeck
+      shuffledDeck should contain theSameElementsAs originalDeck
     }
 
     "allow Wild Draw Four to be played on any card" in {
@@ -80,7 +81,7 @@ class MySuite extends AnyWordSpec with Matchers {
       val player = Player(0, hand)
       val cardToPlay = Card(cardColors.RED, cardValues.ONE)
       val initialHandSize = player.hand.length
-      val newPlayer = player.playCard(cardToPlay)
+      val newPlayer = player.playCard(cardToPlay).get
 
       newPlayer.hand.length shouldBe (initialHandSize - 1)
     }

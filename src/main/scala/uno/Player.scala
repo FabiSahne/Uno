@@ -6,12 +6,12 @@ case class Player(score: Int, hand: List[Card]) {
     hand.exists(_.canBePlayedOn(card))
   }
 
-  def playCard(card: Card): Player = {
+  def playCard(card: Card): Option[Player] = {
     if (canPlay(card)) {
-      val newHand = hand.filterNot(c => c.color == card.color && c.value == card.value)
-      Player(score, newHand)
+      val newHand = hand diff List(card)
+      Some(Player(score, newHand))
     } else {
-      throw new IllegalArgumentException("Can't play that card")
+      None
     }
   }
 }
