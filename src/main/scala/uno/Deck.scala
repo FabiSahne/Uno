@@ -10,21 +10,23 @@ private def generateDeck(): List[Card] = {
       cardValues.SKIP, cardValues.REVERSE, cardValues.DRAW_TWO, cardValues.WILD, cardValues.WILD_DRAW_FOUR
     )
   } yield Card(color, value)
-  allCards
+  scala.util.Random.shuffle(allCards)
 }
 
 case class Deck(cards: List[Card] = generateDeck()) {
-
-  def shuffle(): Deck = {
-    Deck(scala.util.Random.shuffle(cards))
-  }
 
   def draw(numCards: Int): (Deck, List[Card]) = {
     if (numCards <= cards.length) {
       val (drawnCards, remainingCards) = cards.splitAt(numCards)
       (Deck(remainingCards), drawnCards)
     } else {
-      throw new IllegalArgumentException("Not enough cards in the deck to draw")
+      val newCards = scala.util.Random.shuffle(generateDeck())
+      if (numCards <= newCards.length) {
+        val (drawnCards, remainingCards) = newCards.splitAt(numCards)
+        (Deck(remainingCards), drawnCards)
+      } else {
+        throw new Exception("Not enough cards in the deck")
+      }
     }
   }
 }

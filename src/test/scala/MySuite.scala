@@ -26,14 +26,6 @@ class MySuite extends AnyWordSpec with Matchers {
       p1.canPlay(topCard2) should be(false)
     }
 
-    "shuffle deck" in {
-      val deck = Deck()
-      val shuffledDeck = deck.shuffle()
-
-      shuffledDeck.cards should not equal deck.cards
-      shuffledDeck.cards should contain theSameElementsAs deck.cards
-    }
-
     "draw cards" in {
       val deck = Deck()
       val (remainingDeck, drawnCards) = deck.draw(5)

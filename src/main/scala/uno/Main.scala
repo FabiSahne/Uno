@@ -5,8 +5,7 @@ package uno
 
   // Initialize the game
   val deck = Deck()
-  val shuffeledDeck = deck.shuffle()
-  val (remainingDeck1, initialHand1) = shuffeledDeck.draw(7)
+  val (remainingDeck1, initialHand1) = deck.draw(7)
   val (remainingDeck2, initialHand2) = remainingDeck1.draw(7)
   var players = List(Player(initialHand1), Player(initialHand2))
   var currentPlayerIndex = 0
