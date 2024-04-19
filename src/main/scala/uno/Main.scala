@@ -15,12 +15,13 @@ package uno
     println(s"Current player: Player ${currentPlayerIndex + 1}")
     
     currentPlayer.hand.zipWithIndex.foreach { case (card, index) =>
-      val colorCode = card.color match {
-        case cardColors.RED => "\u001b[31m"
-        case cardColors.GREEN => "\u001b[32m"
-        case cardColors.YELLOW => "\u001b[33m"
-        case cardColors.BLUE => "\u001b[34m"
-        //case _ => "\u001b[0m" // default for wild cards
+      val colorCode = card match {
+        case Card(_, cardValues.WILD) => "\u001b[0m"
+        case Card(_, cardValues.WILD_DRAW_FOUR) => "\u001b[0m"
+        case Card(cardColors.RED, _) => "\u001b[31m"
+        case Card(cardColors.GREEN, _) => "\u001b[32m"
+        case Card(cardColors.YELLOW, _) => "\u001b[33m"
+        case Card(cardColors.BLUE, _) => "\u001b[34m"
       }
       println(s"${index + 1}: $colorCode${card.value}\u001b[0m")
     }
