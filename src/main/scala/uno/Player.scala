@@ -1,7 +1,7 @@
 package uno
 import scala.collection.immutable.List
 
-case class Player(score: Int, hand: List[Card]) {
+case class Player(hand: List[Card]) {
   def canPlay(card: Card): Boolean = {
     hand.exists(_.canBePlayedOn(card))
   }
@@ -9,7 +9,7 @@ case class Player(score: Int, hand: List[Card]) {
   def playCard(card: Card): Option[Player] = {
     if (canPlay(card)) {
       val newHand = hand diff List(card)
-      Some(Player(score, newHand))
+      Some(Player(newHand))
     } else {
       None
     }

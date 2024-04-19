@@ -6,7 +6,7 @@ package uno
   // Initialize the game
   val deck = new Deck()
   deck.shuffle()
-  var players = List(Player(0, deck.draw(7)), Player(0, deck.draw(7)))
+  var players = List(Player(deck.draw(7)), Player(deck.draw(7)))
   var currentPlayerIndex = 0
 
   // Game loop
