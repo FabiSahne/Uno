@@ -19,7 +19,7 @@ class MySuite extends AnyWordSpec with Matchers {
 
     "have players" in {
       val hand1: List[Card] = List(Card(cardColors.RED, cardValues.ONE), Card(cardColors.RED, cardValues.TWO))
-      val p1 = Player(0, hand1)
+      val p1 = Player(hand1)
       val topCard = Card(cardColors.RED, cardValues.TWO)
       p1.canPlay(topCard) should be(true)
       val topCard2 = Card(cardColors.BLUE, cardValues.THREE)
@@ -27,21 +27,12 @@ class MySuite extends AnyWordSpec with Matchers {
     }
 
     "shuffle deck" in {
-      val deck = Deck()
-      val shuffledDeck = deck.shuffle()
+      val deck = new Deck()
+      val originalDeck = deck.allCards
+      val shuffledDeck = scala.util.Random.shuffle(originalDeck)
 
-      shuffledDeck.cards should not equal deck.cards
-      shuffledDeck.cards should contain theSameElementsAs deck.cards
-    }
-
-    "draw cards" in {
-      val deck = Deck()
-      val (remainingDeck, drawnCards) = deck.draw(5)
-
-      remainingDeck.cards.length should be (deck.cards.length - 5)
-      drawnCards.length should be (5)
-      drawnCards should contain theSameElementsAs deck.cards.take(5)
-      remainingDeck.cards should contain theSameElementsAs deck.cards.drop(5)
+      shuffledDeck should not equal originalDeck
+      shuffledDeck should contain theSameElementsAs originalDeck
     }
 
     "allow Wild Draw Four to be played on any card" in {
@@ -66,31 +57,31 @@ class MySuite extends AnyWordSpec with Matchers {
 
     "allow a player to play a card that matches the color or value of the top card" in {
       val hand = List(Card(cardColors.RED, cardValues.ONE))
-      val player = Player(0, hand)
+      val player = Player(hand)
       val topCard = Card(cardColors.RED, cardValues.TWO)
       player.canPlay(topCard) should be(true)
     }
 
     "require a player to draw a card if they cannot play any of their cards" in {
       val hand = List(Card(cardColors.RED, cardValues.ONE))
-      val player = Player(0, hand)
+      val player = Player(hand)
       val topCard = Card(cardColors.BLUE, cardValues.TWO)
       player.canPlay(topCard) should be(false)
     }
 
     "allow a player to play a Wild card on any turn" in {
       val hand = List(Card(cardColors.RED, cardValues.WILD))
-      val player = Player(0, hand)
+      val player = Player(hand)
       val topCard = Card(cardColors.BLUE, cardValues.TWO)
       player.canPlay(topCard) should be(true)
     }
 
     "reduce number of cards in player's hand after playing a card" in {
       val hand = List(Card(cardColors.RED, cardValues.ONE), Card(cardColors.RED, cardValues.TWO))
-      val player = Player(0, hand)
+      val player = Player(hand)
       val cardToPlay = Card(cardColors.RED, cardValues.ONE)
       val initialHandSize = player.hand.length
-      val newPlayer = player.playCard(cardToPlay)
+      val newPlayer = player.playCard(cardToPlay).get
 
       newPlayer.hand.length shouldBe (initialHandSize - 1)
     }

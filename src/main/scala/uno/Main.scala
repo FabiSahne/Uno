@@ -4,11 +4,9 @@ package uno
   println("Welcome to Uno, the card game that destroys friendships!")
 
   // Initialize the game
-  val deck = Deck()
-  val shuffeledDeck = deck.shuffle()
-  val (remainingDeck1, initialHand1) = shuffeledDeck.draw(7)
-  val (remainingDeck2, initialHand2) = remainingDeck1.draw(7)
-  var players = List(Player(0, initialHand1), Player(0, initialHand2))
+  val deck = new Deck()
+  deck.shuffle()
+  var players = List(Player(deck.draw(7)), Player(deck.draw(7)))
   var currentPlayerIndex = 0
 
   // Game loop
@@ -32,9 +30,9 @@ package uno
     val cardNumber = scala.io.StdIn.readInt()
     val card = currentPlayer.hand(cardNumber - 1) // Subtract 1 because list indices start at 0
     if (currentPlayer.canPlay(card)) {
-      currentPlayer = currentPlayer.playCard(card)
+      currentPlayer = currentPlayer.playCard(card).get // `get` unwraps the Player from the Option[Player]
       players = players.updated(currentPlayerIndex, currentPlayer)
-      println(s"Player ${currentPlayerIndex + 1} played ${card}")
+      println(s"Player ${currentPlayerIndex + 1} played $card")
     } else {
       println("You can't play that card. You lose your turn.")
     }
