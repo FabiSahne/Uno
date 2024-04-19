@@ -4,9 +4,11 @@ package uno
   println("Welcome to Uno, the card game that destroys friendships!")
 
   // Initialize the game
-  val deck = new Deck()
-  deck.shuffle()
-  var players = List(Player(0, deck.draw(7)), Player(0, deck.draw(7)))
+  val deck = Deck()
+  val shuffeledDeck = deck.shuffle()
+  val (remainingDeck1, initialHand1) = shuffeledDeck.draw(7)
+  val (remainingDeck2, initialHand2) = remainingDeck1.draw(7)
+  var players = List(Player(0, initialHand1), Player(0, initialHand2))
   var currentPlayerIndex = 0
 
   // Game loop
@@ -15,12 +17,13 @@ package uno
     println(s"Current player: Player ${currentPlayerIndex + 1}")
     
     currentPlayer.hand.zipWithIndex.foreach { case (card, index) =>
-      val colorCode = card.color match {
-        case cardColors.RED => "\u001b[31m"
-        case cardColors.GREEN => "\u001b[32m"
-        case cardColors.YELLOW => "\u001b[33m"
-        case cardColors.BLUE => "\u001b[34m"
-        case _ => "\u001b[0m" // default for wild cards
+      val colorCode = card match {
+        case Card(_, cardValues.WILD) => "\u001b[0m"
+        case Card(_, cardValues.WILD_DRAW_FOUR) => "\u001b[0m"
+        case Card(cardColors.RED, _) => "\u001b[31m"
+        case Card(cardColors.GREEN, _) => "\u001b[32m"
+        case Card(cardColors.YELLOW, _) => "\u001b[33m"
+        case Card(cardColors.BLUE, _) => "\u001b[34m"
       }
       println(s"${index + 1}: $colorCode${card.value}\u001b[0m")
     }

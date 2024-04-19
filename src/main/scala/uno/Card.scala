@@ -13,14 +13,3 @@ case class Card(color: cardColors, value: cardValues) {
     this.color == topCard.color || this.value == topCard.value || this.value == cardValues.WILD || this.value == cardValues.WILD_DRAW_FOUR
   }
 }
-
-class Deck {
-  val allCards : List[Card] = for {
-    color <- cardColors.values.toList
-    value <- cardValues.values.toList
-  } yield Card(color, value)
-}
-
-// shuffle card deck
-var cards : List[Card] = scala.util.Random.shuffle(new Deck().allCards)
-

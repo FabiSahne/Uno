@@ -27,11 +27,21 @@ class MySuite extends AnyWordSpec with Matchers {
     }
 
     "shuffle deck" in {
-      val deck = new Deck()
-      val originalDeck = deck.allCards
-      val shuffledDeck = scala.util.Random.shuffle(originalDeck)
+      val deck = Deck()
+      val shuffledDeck = deck.shuffle()
 
-      shuffledDeck should not equal originalDeck
+      shuffledDeck.cards should not equal deck.cards
+      shuffledDeck.cards should contain theSameElementsAs deck.cards
+    }
+
+    "draw cards" in {
+      val deck = Deck()
+      val (remainingDeck, drawnCards) = deck.draw(5)
+
+      remainingDeck.cards.length should be (deck.cards.length - 5)
+      drawnCards.length should be (5)
+      drawnCards should contain theSameElementsAs deck.cards.take(5)
+      remainingDeck.cards should contain theSameElementsAs deck.cards.drop(5)
     }
 
     "allow Wild Draw Four to be played on any card" in {
