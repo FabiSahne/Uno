@@ -19,7 +19,7 @@ class MySuite extends AnyWordSpec {
 
     "have players" in {
       val hand1: List[uno.Card] = List(uno.Card(uno.cardColors.RED, uno.cardValues.ONE), uno.Card(uno.cardColors.RED, uno.cardValues.TWO))
-      val p1 = uno.Player(0, hand1)
+      val p1 = uno.Player(1, 0, hand1)
       val topCard = uno.Card(uno.cardColors.RED, uno.cardValues.TWO)
       assert(p1.canPlay(topCard))
       val topCard2 = uno.Card(uno.cardColors.BLUE, uno.cardValues.THREE)
@@ -27,7 +27,7 @@ class MySuite extends AnyWordSpec {
     }
 
     "shuffle deck" in {
-      val deck = new Deck()
+      val deck = Deck.generateDeck()
       val originalDeck = deck.allCards
       val shuffledDeck = scala.util.Random.shuffle(originalDeck)
 
@@ -56,28 +56,28 @@ class MySuite extends AnyWordSpec {
 
     "allow a player to play a card that matches the color or value of the top card" in {
       val hand = List(uno.Card(uno.cardColors.RED, uno.cardValues.ONE))
-      val player = uno.Player(0, hand)
+      val player = uno.Player(1, 0, hand)
       val topCard = uno.Card(uno.cardColors.RED, uno.cardValues.TWO)
       assert(player.canPlay(topCard))
     }
 
     "require a player to draw a card if they cannot play any of their cards" in {
       val hand = List(uno.Card(uno.cardColors.RED, uno.cardValues.ONE))
-      val player = uno.Player(0, hand)
+      val player = uno.Player(1, 0, hand)
       val topCard = uno.Card(uno.cardColors.BLUE, uno.cardValues.TWO)
       assert(!player.canPlay(topCard))
     }
 
     "allow a player to play a Wild card on any turn" in {
       val hand = List(uno.Card(uno.cardColors.RED, uno.cardValues.WILD))
-      val player = uno.Player(0, hand)
+      val player = uno.Player(1, 0, hand)
       val topCard = uno.Card(uno.cardColors.BLUE, uno.cardValues.TWO)
       assert(player.canPlay(topCard))
     }
 
     "reduce number of cards in player's hand after playing a card" in {
       val hand = List(Card(cardColors.RED, cardValues.ONE), Card(cardColors.RED, cardValues.TWO))
-      val player = Player(0, hand)
+      val player = Player(1, 0, hand)
       val cardToPlay = Card(cardColors.RED, cardValues.ONE)
       val initialHandSize = player.hand.length
       val newPlayer = player.playCard(cardToPlay)
