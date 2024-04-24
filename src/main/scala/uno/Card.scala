@@ -1,4 +1,3 @@
-// Worksheet in Scala
 package uno
 
 enum cardColors:
