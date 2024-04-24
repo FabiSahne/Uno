@@ -14,13 +14,4 @@ case class Card(color: cardColors, value: cardValues) {
   }
 }
 
-class Deck {
-  val allCards : List[Card] = for {
-    color <- cardColors.values.toList
-    value <- cardValues.values.toList
-  } yield Card(color, value)
-}
-
-// shuffle card deck
-var cards : List[Card] = scala.util.Random.shuffle(new Deck().allCards)
 
