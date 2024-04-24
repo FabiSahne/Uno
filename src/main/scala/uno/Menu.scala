@@ -2,9 +2,19 @@ package uno
 
 class Menu {
   def displayMainMenu(): Unit = {
-    println("1. Start a new game")
-    println("2. View the rules")
-    println("3. Exit")
+    val boxTopBottom = "\u001b[34m" + "=" * 40 + "\u001b[0m"
+    val menuItems = List("1. Start a new game", "2. View the rules", "3. Exit")
+    val menuString = menuItems.mkString("\n")
+
+    println(boxTopBottom)
+    println("\u001b[34m||" + " " * 36 + "||\u001b[0m")
+    menuString.split("\n").foreach { item =>
+      val paddingSize = (36 - item.length) / 2
+      val line = "\u001b[34m||\u001b[0m" + " " * paddingSize + "\u001b[36m" + item + "\u001b[0m" + " " * (36 - paddingSize - item.length) + "\u001b[34m||\u001b[0m"
+      println(line)
+    }
+    println("\u001b[34m||" + " " * 36 + "||\u001b[0m")
+    println(boxTopBottom)
   }
 
   def displayGameMenu(player: Player, topCard: Card): Unit = {
