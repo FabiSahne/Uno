@@ -1,7 +1,7 @@
 package uno
 import org.scalatest.wordspec.AnyWordSpec
-import org.scalatest.matchers.should.Matchers._
-class MySuite extends AnyWordSpec {
+import org.scalatest.matchers.should._
+class MySuite extends AnyWordSpec with Matchers {
 
   "Uno" should {
     "have cards" in {
@@ -11,19 +11,19 @@ class MySuite extends AnyWordSpec {
       val c2 = uno.Card(uno.cardColors.BLUE, uno.cardValues.ONE)
       val c3 = uno.Card(uno.cardColors.RED, uno.cardValues.TWO)
       val c4 = uno.Card(uno.cardColors.BLUE, uno.cardValues.TWO)
-      assert(c2.canBePlayedOn(c1))
-      assert(c3.canBePlayedOn(c3))
-      assert(!c4.canBePlayedOn(c1))
-      assert(c4.canBePlayedOn(c3))
+      c2.canBePlayedOn(c1) should be(true)
+      c3.canBePlayedOn(c1) should be(true)
+      c4.canBePlayedOn(c1) should be(false)
+      c4.canBePlayedOn(c3) should be(true)
     }
 
     "have players" in {
       val hand1: List[uno.Card] = List(uno.Card(uno.cardColors.RED, uno.cardValues.ONE), uno.Card(uno.cardColors.RED, uno.cardValues.TWO))
       val p1 = uno.Player(1, 0, hand1)
       val topCard = uno.Card(uno.cardColors.RED, uno.cardValues.TWO)
-      assert(p1.canPlay(topCard))
+      p1.canPlay(topCard) should be(true)
       val topCard2 = uno.Card(uno.cardColors.BLUE, uno.cardValues.THREE)
-      assert(!p1.canPlay(topCard2))
+      p1.canPlay(topCard2) should be(false)
     }
 
     "shuffle deck" in {
@@ -39,9 +39,9 @@ class MySuite extends AnyWordSpec {
       val c2 = uno.Card(uno.cardColors.BLUE, uno.cardValues.WILD_DRAW_FOUR)
       val c3 = uno.Card(uno.cardColors.RED, uno.cardValues.ONE)
       val c4 = uno.Card(uno.cardColors.BLUE, uno.cardValues.TWO)
-      assert(c1.canBePlayedOn(c2))
-      assert(c1.canBePlayedOn(c3))
-      assert(c1.canBePlayedOn(c4))
+      c1.canBePlayedOn(c2) should be(true)
+      c1.canBePlayedOn(c3) should be(true)
+      c1.canBePlayedOn(c4) should be(true)
     }
 
     "allow Wild to be played on any card" in {
@@ -49,30 +49,30 @@ class MySuite extends AnyWordSpec {
       val c2 = uno.Card(uno.cardColors.BLUE, uno.cardValues.WILD)
       val c3 = uno.Card(uno.cardColors.RED, uno.cardValues.ONE)
       val c4 = uno.Card(uno.cardColors.BLUE, uno.cardValues.TWO)
-      assert(c1.canBePlayedOn(c2))
-      assert(c1.canBePlayedOn(c3))
-      assert(c1.canBePlayedOn(c4))
+      c1.canBePlayedOn(c2) should be(true)
+      c1.canBePlayedOn(c3) should be(true)
+      c1.canBePlayedOn(c4) should be(true)
     }
 
     "allow a player to play a card that matches the color or value of the top card" in {
       val hand = List(uno.Card(uno.cardColors.RED, uno.cardValues.ONE))
       val player = uno.Player(1, 0, hand)
       val topCard = uno.Card(uno.cardColors.RED, uno.cardValues.TWO)
-      assert(player.canPlay(topCard))
+      player.canPlay(topCard) should be(true)
     }
 
     "require a player to draw a card if they cannot play any of their cards" in {
       val hand = List(uno.Card(uno.cardColors.RED, uno.cardValues.ONE))
       val player = uno.Player(1, 0, hand)
       val topCard = uno.Card(uno.cardColors.BLUE, uno.cardValues.TWO)
-      assert(!player.canPlay(topCard))
+      player.canPlay(topCard) should be(false)
     }
 
     "allow a player to play a Wild card on any turn" in {
       val hand = List(uno.Card(uno.cardColors.RED, uno.cardValues.WILD))
       val player = uno.Player(1, 0, hand)
       val topCard = uno.Card(uno.cardColors.BLUE, uno.cardValues.TWO)
-      assert(player.canPlay(topCard))
+      player.canPlay(topCard) should be(true)
     }
 
     "reduce number of cards in player's hand after playing a card" in {
@@ -82,7 +82,7 @@ class MySuite extends AnyWordSpec {
       val initialHandSize = player.hand.length
       val newPlayer = player.playCard(cardToPlay)
 
-      newPlayer.hand.length shouldBe (initialHandSize - 1)
+      newPlayer.hand.length should be(initialHandSize - 1)
     }
   }
 }

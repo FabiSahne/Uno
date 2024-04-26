@@ -68,7 +68,7 @@ class TUI {
           if (currentPlayer.canPlay(card)) {
             val newPlayer = currentPlayer.playCard(card)
             val newPlayers = players.updated(currentPlayerIndex, newPlayer)
-            println(s"Player ${currentPlayerIndex + 1} played ${card}")
+            //println(s"Player ${currentPlayerIndex + 1} played ${card}")
             gameLoop(newPlayers, deck, (currentPlayerIndex + 1) % players.size)
           } else {
             println("You can't play that card. You lose your turn.")
@@ -85,12 +85,13 @@ class TUI {
     }
 
     def getColorCode(card: Card): String = {
-      card.color match {
-        case cardColors.RED => "\u001b[31m"
-        case cardColors.GREEN => "\u001b[32m"
-        case cardColors.YELLOW => "\u001b[33m"
-        case cardColors.BLUE => "\u001b[34m"
-        case _ => "\u001b[0m" // default for wild cards
+      card match {
+        case Card(_, cardValues.WILD) => "\u001b[0m"
+        case Card(_, cardValues.WILD_DRAW_FOUR) => "\u001b[0m"
+        case Card(cardColors.RED, _) => "\u001b[31m"
+        case Card(cardColors.GREEN, _) => "\u001b[32m"
+        case Card(cardColors.YELLOW, _) => "\u001b[33m"
+        case Card(cardColors.BLUE, _) => "\u001b[34m"
       }
     }
 
