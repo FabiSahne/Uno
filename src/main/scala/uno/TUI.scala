@@ -23,8 +23,10 @@ class TUI {
     menu.handleMainMenuInput(input) match {
       case 1 => 
         val deck = Deck.generateDeck().shuffle()
-        val players = List(Player(1, 0, deck.draw(7)._1), Player(2, 0, deck.draw(7)._1))
-        gameLoop(players, deck, 0)
+        val (hand1, deck1) = deck.draw(7)
+        val (hand2, deck2) = deck1.draw(7)
+        val players = List(Player(1, 0, hand1), Player(2, 0, hand2))
+        gameLoop(players, deck2, 0)
       case 2 => 
         startGame() 
       case 3 => 
