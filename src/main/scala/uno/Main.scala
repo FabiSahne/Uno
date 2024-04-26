@@ -1,6 +1,10 @@
 package uno
 
+import uno.controller.GameController
+import uno.views.TUI
+
 @main def hello(): Unit = {
-  val tui = new TUI()
+  val controller = new GameController()
+  val tui = new TUI(controller)
   tui.startGame()
 }

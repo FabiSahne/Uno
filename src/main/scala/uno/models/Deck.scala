@@ -1,4 +1,4 @@
-package uno
+package uno.models
 
 case class Deck(allCards: List[Card]) {
   def shuffle(): Deck = {

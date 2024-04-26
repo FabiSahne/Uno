@@ -1,8 +1,25 @@
-package uno
+package uno.views
+
+import uno.models.*
+import uno.util.{Event, Observer}
+import uno.controller.GameController
+import uno.util.Event.Quit
 
 import scala.io.StdIn
+import scala.io.AnsiColor._
 
-class TUI {
+
+class TUI(val controller: GameController) extends Observer {
+  controller.add(this)
+  private var continue = true
+
+  override def update(e: Event): Unit =
+    e match {
+      case Quit => continue = false
+      case _ => ()
+    }
+
+  
   private val menu = new Menu()
 
   def startGame(): Unit = {
@@ -37,12 +54,10 @@ class TUI {
         val currentPlayer = players(currentPlayerIndex)
         println(s"Current player: Player ${currentPlayerIndex + 1}")
 
-        val topCardColorCode = getColorCode(topCard)
-        println(s"Current top card: $topCardColorCode${topCard.value}\u001b[0m")
+        println(s"Current top card: ${topCard.getColorCode}${topCard.value}$RESET")
 
         currentPlayer.hand.zipWithIndex.foreach { case (card, index) =>
-          val colorCode = getColorCode(card)
-          println(s"${index + 1}: $colorCode${card.value}\u001b[0m")
+          println(s"${index + 1}: ${card.getColorCode}${card.value}$RESET")
         }
 
         println("Enter the number of the card you want to play:")
@@ -90,17 +105,6 @@ class TUI {
         println("Game over!")
         val winnerIndex = players.indexWhere(_.hand.isEmpty)
         println(s"Player ${winnerIndex + 1} wins!")
-      }
-    }
-
-    private def getColorCode(card: Card): String = {
-      card match {
-        case Card(_, cardValues.WILD) => "\u001b[0m"
-        case Card(_, cardValues.WILD_DRAW_FOUR) => "\u001b[0m"
-        case Card(cardColors.RED, _) => "\u001b[31m"
-        case Card(cardColors.GREEN, _) => "\u001b[32m"
-        case Card(cardColors.YELLOW, _) => "\u001b[33m"
-        case Card(cardColors.BLUE, _) => "\u001b[34m"
       }
     }
 

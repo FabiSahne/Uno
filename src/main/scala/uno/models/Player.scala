@@ -1,4 +1,7 @@
-package uno
+package uno.models
+
+import uno.models.Card
+
 import scala.collection.immutable.List
 import scala.util.{Failure, Success, Try}
 
