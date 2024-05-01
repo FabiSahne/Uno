@@ -13,7 +13,8 @@ class Menu {
     println(s"$BLUE||" + " " * 36 + "||")
     menuString.split("\n").foreach { item =>
       val paddingSize = (36 - item.length) / 2
-      val line = s"$BLUE||" + " " * paddingSize + s"$CYAN" + item + " " * (36 - paddingSize - item.length) + s"$BLUE||"
+      val line =
+        s"$BLUE||" + " " * paddingSize + s"$CYAN" + item + " " * (36 - paddingSize - item.length) + s"$BLUE||"
       println(line)
     }
     println(s"$BLUE||" + " " * 36 + s"||")
@@ -24,10 +25,12 @@ class Menu {
     println(s"Current player: Player ${player.id}")
     println(s"Top card: $topCard")
     println("Your hand:")
-    player.hand.zipWithIndex.foreach { case (card, index) =>
+    player.hand.cards.zipWithIndex.foreach { case (card, index) =>
       println(s"${index + 1}. $card")
     }
-    println("Enter the number of the card you want to play, or 0 to draw a card:")
+    println(
+      "Enter the number of the card you want to play, or 0 to draw a card:"
+    )
   }
 
   def handleMainMenuInput(input: Int): Int = {
@@ -45,7 +48,9 @@ class Menu {
     if (input >= 0 && input <= handSize) {
       input
     } else {
-      println("Invalid input. Please enter a number between 0 and the size of your hand.")
+      println(
+        "Invalid input. Please enter a number between 0 and the size of your hand."
+      )
       -1 // Invalid input
     }
   }
