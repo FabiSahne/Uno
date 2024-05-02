@@ -1,9 +1,9 @@
 package uno.controller
 
-import uno.models.Card
+import uno.models._
 import uno.util.*
 
-class GameController extends Observable:
+class GameController(var round: Round) extends Observable:
   def initGame(): Unit =
     notifyObservers(Event.Start)
 
@@ -11,7 +11,25 @@ class GameController extends Observable:
     notifyObservers(Event.Quit)
 
   def playCard(card: Card): Unit =
+    val newPlayer = round.players(round.currentPlayer).playCard(card).get
+    val newPlayers = round.players.updated(round.currentPlayer, newPlayer)
+    if (newPlayer.hand.cards.isEmpty) {
+      quitGame()
+      return
+    }
+    round = round.copy(
+      players = newPlayers,
+      topCard = card,
+      currentPlayer = (round.currentPlayer + 1) % round.players.length
+    )
     notifyObservers(Event.Play)
 
   def drawCard(): Unit =
+    val newCard = randomCard
+    val newPlayer = Player(
+      round.currentPlayer,
+      round.players(round.currentPlayer).hand.addCard(newCard)
+    )
+    val newPlayers = round.players.updated(round.currentPlayer, newPlayer)
+    round = round.copy(players = newPlayers)
     notifyObservers(Event.Draw)
