@@ -1,5 +1,5 @@
 [![Coverage Status](https://coveralls.io/repos/github/FabiSahne/Uno/badge.svg)](https://coveralls.io/github/FabiSahne/Uno?branch=develop)
-[![Build Status](https://travis-ci.com/FabiSahne/Uno.svg?branch=main)](https://travis-ci.com/FabiSahne/Uno)
+[![Scala CI](https://github.com/FabiSahne/Uno/actions/workflows/scala.yml/badge.svg)](https://github.com/FabiSahne/Uno/actions/workflows/scala.yml)
 
 ------------
 
