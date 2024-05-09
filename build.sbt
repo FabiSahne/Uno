@@ -11,8 +11,5 @@ lazy val root = project
     libraryDependencies += "org.scalactic" %% "scalactic" % "3.2.18",
     libraryDependencies += "org.scalatest" %% "scalatest" % "3.2.18" % "test",
 
-    coverageExcludedPackages := "uno.views.*",
-    coverageExcludedFiles := ".*uno/Main.scala"
-
-
-)
+    ThisBuild / coverageExcludedFiles := """.*uno/Main;.*/uno/views/.*"""
+  )
