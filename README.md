@@ -3,7 +3,6 @@
 [![BSD-3 License](https://img.shields.io/badge/license-GPL--3-blue)](https://github.com/netbirdio/netbird/blob/main/LICENSE)
 
 
-
 ------------
 
 # Software Engineering Project: Uno
