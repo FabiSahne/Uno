@@ -1,5 +1,8 @@
 [![Coverage Status](https://coveralls.io/repos/github/FabiSahne/Uno/badge.svg?branch=develop)](https://coveralls.io/github/FabiSahne/Uno?branch=develop)
 [![Scala CI](https://github.com/FabiSahne/Uno/actions/workflows/scala.yml/badge.svg)](https://github.com/FabiSahne/Uno/actions/workflows/scala.yml)
+[![BSD-3 License](https://img.shields.io/badge/license-GPL--3-blue)](https://github.com/netbirdio/netbird/blob/main/LICENSE)
+
+
 
 ------------
 
