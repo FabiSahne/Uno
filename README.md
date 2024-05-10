@@ -11,8 +11,6 @@ This is our (Fabian W, Selin K) project for the Software Engineering course at t
 
 ![Uno](https://i.imgur.com/ZxnUpNI.png)
 
-------------
-
 ## The Road So Far
 - [x] Playable with two players
 - [x] Cards are drawn from a deck
