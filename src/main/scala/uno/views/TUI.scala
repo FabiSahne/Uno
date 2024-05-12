@@ -35,19 +35,17 @@ class TUI(val controller: GameController) extends Observer {
       case Some(1) =>
         controller.initGame()
       case Some(2) =>
-        startGame()
-      case Some(3) =>
         println("Goodbye!")
         controller.quitGame()
       case _ =>
-        println("Invalid input. Please enter a number between 1 and 3.")
+        println("Invalid input. Please enter a number between 1 and 2.") // Adjusted the number range
         startGame()
     }
   }
 
   private def displayMainMenu(): Unit = {
     val boxTopBottom = s"$BLUE" + "=" * 40 + s"$RESET"
-    val menuItems = List("1. Start a new game", "2. View the rules", "3. Exit")
+    val menuItems = List("1. Start a new game", "2. Exit") // Removed "2. View the rules"
     val menuString = menuItems.mkString("\n")
 
     println(boxTopBottom)
