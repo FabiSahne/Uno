@@ -64,5 +64,5 @@ class GameController(var round: Round) extends Observable:
   private def saveState(): Unit =
     caretaker.addMemento(Memento(round))
 
-  private def restoreState(): Unit =
+  def restoreState(): Unit =
     caretaker.getMemento.foreach(memento => round = memento.round)
