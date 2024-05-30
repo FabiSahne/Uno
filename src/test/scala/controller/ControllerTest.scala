@@ -9,12 +9,19 @@ import uno.models.cardColors.*
 import uno.models.cardValues.*
 import uno.util.Event.Start
 
+import java.io.ByteArrayOutputStream
+
 class ControllerTest extends AnyWordSpec {
   "The Controller" should {
     val round =
       Round(
-        List(Player(0, Hand(List(Card(RED, ONE), Card(RED, TWO))))),
-        Card(RED, THREE)
+        List(
+          Player(
+            0,
+            Hand(List(NormalCard(Some(RED), ONE), NormalCard(Some(RED), TWO)))
+          )
+        ),
+        NormalCard(Some(RED), THREE)
       )
     val controller = GameController(round)
     "notify its observers on quit" in {
@@ -51,15 +58,21 @@ class ControllerTest extends AnyWordSpec {
       testObserver.bing should be(false)
     }
     "play card" in {
-      val card = Card(RED, ONE)
+      val card = NormalCard(Some(RED), ONE)
       controller.playCard(card)
       controller.round.players.head.hand.cards should not contain card
     }
     "draw card" in {
       controller.drawCard()
       controller.round.players.head.hand.cards.size should be(2)
-      controller.round =
-        Round(List(Player(0, Hand(List(Card(RED, ONE), Card(BLUE, TWO))))))
+      controller.round = Round(
+        List(
+          Player(
+            0,
+            Hand(List(NormalCard(Some(RED), ONE), NormalCard(Some(BLUE), TWO)))
+          )
+        )
+      )
     }
     "quit game" in {
       class TestObserver(val controller: GameController) extends Observer:
@@ -72,6 +85,67 @@ class ControllerTest extends AnyWordSpec {
       controller.playCard(cards.head)
       controller.playCard(cards(1))
       testObserver.bing should be(Event.Quit)
+    }
+    "send commands" in {
+      val round =
+        Round(
+          List(
+            Player(
+              0,
+              Hand(
+                List(
+                  NormalCard(Some(RED), DRAW_TWO),
+                  NormalCard(Some(RED), REVERSE),
+                  NormalCard(Some(RED), SKIP),
+                  WildCard(None, WILD),
+                  WildCard(None, WILD_DRAW_FOUR),
+                  NormalCard(Some(RED), THREE)
+                )
+              )
+            )
+          ),
+          NormalCard(Some(RED), THREE)
+        )
+      val controller = GameController(round)
+      val cards = controller.round.players.head.hand.cards
+      val outCapture = ByteArrayOutputStream()
+      Console.withOut(outCapture) {
+        controller.playCard(cards.head)
+      }
+      outCapture.toString() should include("Draw Two command executed")
+      Console.withOut(outCapture) {
+        controller.playCard(cards(1))
+      }
+      outCapture.toString() should include("Reverse command executed")
+      Console.withOut(outCapture) {
+        controller.playCard(cards(2))
+      }
+      outCapture.toString() should include("Skip command executed")
+      Console.withOut(outCapture) {
+        controller.playCard(cards(3))
+      }
+      outCapture.toString() should include("Wild command executed")
+      Console.withOut(outCapture) {
+        controller.playCard(cards(4))
+      }
+      outCapture.toString() should include("Wild Draw Four command executed")
+    }
+    "save and restore state" in {
+      val round =
+        Round(
+          List(
+            Player(
+              0,
+              Hand(List(NormalCard(Some(RED), ONE), NormalCard(Some(RED), TWO)))
+            )
+          ),
+          NormalCard(Some(RED), THREE)
+        )
+      val controller = GameController(round)
+      controller.playCard(NormalCard(Some(RED), ONE))
+      controller.round should not be round
+      controller.restoreState()
+      controller.round should be(round)
     }
   }
 }
