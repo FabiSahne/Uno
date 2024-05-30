@@ -3,10 +3,11 @@ package uno.views
 import uno.models.*
 import uno.util.{Event, Observer}
 import uno.controller.GameController
-import uno.util.Event._
+import uno.util.Event.*
 
+import scala.annotation.tailrec
 import scala.io.StdIn
-import scala.io.AnsiColor._
+import scala.io.AnsiColor.*
 
 class TUI(val controller: GameController) extends Observer {
   controller.add(this)
@@ -60,13 +61,14 @@ class TUI(val controller: GameController) extends Observer {
     println(boxTopBottom)
   }
 
+  @tailrec
   private def gameLoop(): Unit = {
     clearScreen()
     val currentPlayer = controller.round.players(controller.round.currentPlayer)
     println(s"Current player: Player ${controller.round.currentPlayer + 1}")
-    println(s"Current top card: ${controller.round.topCard.getColorCode}${controller.round.topCard.value}$RESET")
+    println(s"Current top card: ${controller.round.topCard.getColorCode}${controller.round.topCard.getValue}$RESET")
     currentPlayer.hand.cards.zipWithIndex.foreach { case (card, index) =>
-      println(s"${index + 1}: ${card.getColorCode}${card.value}$RESET")
+      println(s"${index + 1}: ${card.getColorCode}${card.getValue}$RESET")
     }
     println("Enter the number of the card you want to play:")
     val cardNumber = StdIn.readLine().toIntOption

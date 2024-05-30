@@ -26,7 +26,7 @@ class GameController(var round: Round) extends Observable:
       topCard = card,
       currentPlayer = (round.currentPlayer + 1) % round.players.length
     )
-    card.value match {
+    card.getValue match {
       case cardValues.DRAW_TWO =>
         val command = new DrawTwoCommand
         executeCommand(command)
@@ -47,7 +47,7 @@ class GameController(var round: Round) extends Observable:
     notifyObservers(Event.Play)
 
   def drawCard(): Unit =
-    val newCard = randomCard
+    val newCard = CardFacade().randomCard
     val newPlayer = Player(
       round.currentPlayer,
       round.players(round.currentPlayer).hand.addCard(newCard)
