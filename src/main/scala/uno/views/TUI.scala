@@ -1,6 +1,6 @@
 package uno.views
 
-import uno.models.*
+import uno.models._
 import uno.util.{Event, Observer}
 import uno.controller.GameController
 import uno.util.Event._
@@ -13,6 +13,7 @@ class TUI(val controller: GameController) extends Observer {
 
   override def update(e: Event): Unit =
     e match {
+      case Start => gameLoop()
       case Quit =>
         if (controller.round.players.exists(_.hand.cards.nonEmpty)) {
           // Game was quit prematurely, do not call gameOver()
@@ -20,7 +21,9 @@ class TUI(val controller: GameController) extends Observer {
           // Game ended naturally, call gameOver()
           gameOver()
         }
-      case _ => gameLoop()
+      case Play => gameLoop()
+      case Draw => gameLoop()
+      case Quit => gameOver()
     }
 
   def startGame(): Unit = {
@@ -38,14 +41,14 @@ class TUI(val controller: GameController) extends Observer {
         println("Goodbye!")
         controller.quitGame()
       case _ =>
-        println("Invalid input. Please enter a number between 1 and 2.") // Adjusted the number range
+        println("Invalid input. Please enter a number between 1 and 2.")
         startGame()
     }
   }
 
   private def displayMainMenu(): Unit = {
     val boxTopBottom = s"$BLUE" + "=" * 40 + s"$RESET"
-    val menuItems = List("1. Start a new game", "2. Exit") // Removed "2. View the rules"
+    val menuItems = List("1. Start a new game", "2. Exit")
     val menuString = menuItems.mkString("\n")
 
     println(boxTopBottom)
