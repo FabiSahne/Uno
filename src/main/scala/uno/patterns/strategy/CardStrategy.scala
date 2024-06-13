@@ -13,9 +13,12 @@ case class SkipCommand() extends CardStrategy {
       gameController: GameController,
       color: Option[cardColors] = None
   ): Unit =
+    val direction = gameController.round.direction
     gameController.round = gameController.round.copy(
-      currentPlayer =
-        (gameController.round.currentPlayer + 1) % gameController.round.players.length
+      currentPlayer = if (gameController.round.currentPlayer + direction < 0)
+        gameController.round.players.length - 1
+      else
+        (gameController.round.currentPlayer + direction) % gameController.round.players.length
     )
 }
 
@@ -24,7 +27,8 @@ case class ReverseCommand() extends CardStrategy {
       gameController: GameController,
       color: Option[cardColors] = None
   ): Unit =
-    println("Reverse command executed")
+    gameController.round =
+      gameController.round.copy(direction = -gameController.round.direction)
 }
 
 case class DrawTwoCommand() extends CardStrategy {
@@ -32,7 +36,12 @@ case class DrawTwoCommand() extends CardStrategy {
       gameController: GameController,
       color: Option[cardColors] = None
   ): Unit =
-    val idx = gameController.round.currentPlayer
+    val direction = gameController.round.direction
+    val idx =
+      if (gameController.round.currentPlayer + direction < 0)
+        gameController.round.players.length - gameController.round.currentPlayer + direction
+      else
+        (gameController.round.currentPlayer + direction) % gameController.round.players.length
     val cards = List.fill(2)(CardFacade().randomCard)
     gameController.round = gameController.round.copy(
       players = gameController.round.players.updated(
@@ -60,7 +69,12 @@ case class WildDrawFourCommand() extends CardStrategy {
       gameController: GameController,
       color: Option[cardColors]
   ): Unit =
-    val idx = gameController.round.currentPlayer
+    val direction = gameController.round.direction
+    val idx =
+      if (gameController.round.currentPlayer + direction < 0)
+        gameController.round.players.length - 1
+      else
+        (gameController.round.currentPlayer + direction) % gameController.round.players.length
     val cards = List.fill(4)(CardFacade().randomCard)
     gameController.round = gameController.round.copy(
       players = gameController.round.players.updated(

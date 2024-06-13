@@ -2,11 +2,11 @@ package uno.models
 
 import scala.util.Random
 
-private val WILD_CHANCE = 0.10
+private val WildChance = 0.10
 
 class CardFacade {
   def randomCard: Card =
-    if (Random.nextDouble() < WILD_CHANCE) {
+    if (Random.nextDouble() < WildChance) {
       WildCard(None, randomWildValue)
     } else {
       NormalCard(Some(randomColor), randomNormalValue)

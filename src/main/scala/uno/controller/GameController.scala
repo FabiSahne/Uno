@@ -27,8 +27,7 @@ class GameController(var round: Round) extends Observable:
     saveState()
     round = round.copy(
       players = newPlayers,
-      topCard = card,
-      currentPlayer = (round.currentPlayer + 1) % round.players.length
+      topCard = card
     )
     card.getValue match {
       case cardValues.DRAW_TWO =>
@@ -48,12 +47,21 @@ class GameController(var round: Round) extends Observable:
         executeCommand(strategy)
       case _ => ()
     }
+    val direction = round.direction;
+    val newPlayerIdx =
+      if (round.currentPlayer + direction < 0)
+        round.players.length - 1
+      else (round.currentPlayer + direction) % round.players.length
+    round = round.copy(
+      currentPlayer = newPlayerIdx
+    )
     notifyObservers(Event.Play)
 
   def chooseColor(color: Int): Unit =
-    val strategy = round.topCard.getValue match
-      case cardValues.WILD           => new WildCommand
-      case cardValues.WILD_DRAW_FOUR => new WildDrawFourCommand
+    val strategy =
+      if round.topCard.getValue == cardValues.WILD_DRAW_FOUR then
+        new WildDrawFourCommand
+      else new WildCommand
     val card_color: Option[cardColors] = color match
       case 1 => Some(cardColors.RED)
       case 2 => Some(cardColors.BLUE)
@@ -73,7 +81,10 @@ class GameController(var round: Round) extends Observable:
     round = round.copy(players = newPlayers)
     notifyObservers(Event.Draw)
 
-  private def executeCommand(strategy: CardStrategy, color: Option[cardColors] = None): Unit = {
+  private def executeCommand(
+      strategy: CardStrategy,
+      color: Option[cardColors] = None
+  ): Unit = {
     strategy.execute(this, color)
   }
 
