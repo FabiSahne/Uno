@@ -1,6 +1,6 @@
 package uno.views
 
-import uno.models._
+import uno.models.*
 import uno.util.{Event, Observer}
 import uno.controller.GameController
 import uno.util.Event.*
@@ -14,7 +14,6 @@ class TUI(val controller: GameController) extends Observer {
 
   override def update(e: Event): Unit =
     e match {
-      case Start => gameLoop()
       case Quit =>
         if (controller.round.players.exists(_.hand.cards.nonEmpty)) {
           // Game was quit prematurely, do not call gameOver()
@@ -22,9 +21,23 @@ class TUI(val controller: GameController) extends Observer {
           // Game ended naturally, call gameOver()
           gameOver()
         }
-      case Play => gameLoop()
-      case Draw => gameLoop()
-      case Quit => gameOver()
+      case ChooseColor => chooseColor()
+      case _           => gameLoop()
+    }
+    
+  @tailrec
+  private def chooseColor(): Unit =
+    println("Choose a color:")
+    println("1: Red")
+    println("2: Blue")
+    println("3: Green")
+    println("4: Yellow")
+    val selection = StdIn.readLine().toIntOption.getOrElse(-1)
+    if (selection < 1 || selection > 4) {
+      println("Invalid input. Please enter a number between 1 and 4.")
+      chooseColor()
+    } else {
+      controller.chooseColor(selection)
     }
 
   def startGame(): Unit = {
@@ -42,14 +55,17 @@ class TUI(val controller: GameController) extends Observer {
         println("Goodbye!")
         controller.quitGame()
       case _ =>
-        println("Invalid input. Please enter a number between 1 and 2.")
+        println(
+          "Invalid input. Please enter a number between 1 and 2."
+        ) // Adjusted the number range
         startGame()
     }
   }
 
   private def displayMainMenu(): Unit = {
     val boxTopBottom = s"$BLUE" + "=" * 40 + s"$RESET"
-    val menuItems = List("1. Start a new game", "2. Exit")
+    val menuItems =
+      List("1. Start a new game", "2. Exit") // Removed "2. View the rules"
     val menuString = menuItems.mkString("\n")
 
     println(boxTopBottom)
@@ -69,7 +85,9 @@ class TUI(val controller: GameController) extends Observer {
     clearScreen()
     val currentPlayer = controller.round.players(controller.round.currentPlayer)
     println(s"Current player: Player ${controller.round.currentPlayer + 1}")
-    println(s"Current top card: ${controller.round.topCard.getColorCode}${controller.round.topCard.getValue}$RESET")
+    println(
+      s"Current top card: ${controller.round.topCard.getColorCode}${controller.round.topCard.getValue}$RESET"
+    )
     currentPlayer.hand.cards.zipWithIndex.foreach { case (card, index) =>
       println(s"${index + 1}: ${card.getColorCode}${card.getValue}$RESET")
     }
@@ -88,8 +106,15 @@ class TUI(val controller: GameController) extends Observer {
       println("Invalid card number. Please try again.")
       gameLoop()
     } else {
-      val card = controller.round.players(controller.round.currentPlayer).hand.cards(input - 1)
-      if (controller.round.players(controller.round.currentPlayer).canPlay(card) && card.canBePlayedOn(controller.round.topCard)) {
+      val card = controller.round
+        .players(controller.round.currentPlayer)
+        .hand
+        .cards(input - 1)
+      if (
+        controller.round
+          .players(controller.round.currentPlayer)
+          .canPlay(card) && card.canBePlayedOn(controller.round.topCard)
+      ) {
         controller.playCard(card)
       } else {
         println("You can't play that card. Do you want to draw, or try again?")

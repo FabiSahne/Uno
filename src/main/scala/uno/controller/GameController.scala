@@ -1,14 +1,18 @@
 package uno.controller
 
-import uno.patterns.command.*
 import uno.models.*
 import uno.patterns.memento.*
+import uno.patterns.strategy.*
 import uno.util.*
 
 class GameController(var round: Round) extends Observable:
   private val caretaker = new Caretaker
   def initGame(): Unit =
     notifyObservers(Event.Start)
+    startPlay()
+
+  def startPlay(): Unit =
+    notifyObservers(Event.Play)
 
   def quitGame(): Unit =
     notifyObservers(Event.Quit)
@@ -28,23 +32,35 @@ class GameController(var round: Round) extends Observable:
     )
     card.getValue match {
       case cardValues.DRAW_TWO =>
-        val command = new DrawTwoCommand
-        executeCommand(command)
+        val strategy = new DrawTwoCommand
+        executeCommand(strategy)
       case cardValues.REVERSE =>
-        val command = new ReverseCommand
-        executeCommand(command)
+        val strategy = new ReverseCommand
+        executeCommand(strategy)
       case cardValues.SKIP =>
-        val command = new SkipCommand
-        executeCommand(command)
+        val strategy = new SkipCommand
+        executeCommand(strategy)
       case cardValues.WILD =>
-        val command = new WildCommand
-        executeCommand(command)
+        notifyObservers(Event.ChooseColor)
       case cardValues.WILD_DRAW_FOUR =>
-        val command = new WildDrawFourCommand
-        executeCommand(command)
+        notifyObservers(Event.ChooseColor)
+        val strategy = new WildDrawFourCommand
+        executeCommand(strategy)
       case _ => ()
     }
     notifyObservers(Event.Play)
+
+  def chooseColor(color: Int): Unit =
+    val strategy = round.topCard.getValue match
+      case cardValues.WILD           => new WildCommand
+      case cardValues.WILD_DRAW_FOUR => new WildDrawFourCommand
+    val card_color: Option[cardColors] = color match
+      case 1 => Some(cardColors.RED)
+      case 2 => Some(cardColors.BLUE)
+      case 3 => Some(cardColors.GREEN)
+      case 4 => Some(cardColors.YELLOW)
+      case _ => None
+    executeCommand(strategy, card_color)
 
   def drawCard(): Unit =
     val newCard = CardFacade().randomCard
@@ -57,8 +73,8 @@ class GameController(var round: Round) extends Observable:
     round = round.copy(players = newPlayers)
     notifyObservers(Event.Draw)
 
-  private def executeCommand(command: Command): Unit = {
-    command.execute(this)
+  private def executeCommand(strategy: CardStrategy, color: Option[cardColors] = None): Unit = {
+    strategy.execute(this, color)
   }
 
   private def saveState(): Unit =
