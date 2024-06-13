@@ -20,14 +20,14 @@ class HandTest extends AnyWordSpec {
     }
     "existing" should {
       "be able to get a card removed" in {
-        val hand = Hand(randomCards(2))
+        val hand = Hand(CardFacade().randomCards(2))
         val card = hand.cards.head
         val newHand = hand.removeCard(card)
         newHand.cards should be(hand.cards.tail)
       }
       "be able to get a card added" in {
-        val hand = Hand(randomCards(2))
-        val card = Card(cardColors.RED, cardValues.ZERO)
+        val hand = Hand(CardFacade().randomCards(2))
+        val card = NormalCard(Some(cardColors.RED), cardValues.ZERO)
         val newHand = hand.addCard(card)
         newHand.cards should be(card +: hand.cards)
       }
