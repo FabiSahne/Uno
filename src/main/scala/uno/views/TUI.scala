@@ -91,13 +91,19 @@ class TUI(val controller: GameController) extends Observer {
     currentPlayer.hand.cards.zipWithIndex.foreach { case (card, index) =>
       println(s"${index + 1}: ${card.getColorCode}${card.getValue}$RESET")
     }
-    println("Enter the number of the card you want to play:")
-    val cardNumber = StdIn.readLine().toIntOption
-    if (cardNumber.isEmpty) {
-      println("Invalid input. Please enter a number.")
-      gameLoop()
-    } else {
-      handleGameMenuInput(cardNumber.get, currentPlayer.hand.cards.length)
+    println("Enter the number of the card you want to play, or 'u' for undo, 'r' for redo:")
+    val input = StdIn.readLine()
+    input match {
+      case "u" => controller.undo()
+      case "r" => controller.redo()
+      case _ =>
+        val cardNumber = input.toIntOption
+        if (cardNumber.isEmpty) {
+          println("Invalid input. Please enter a number, 'u' for undo, or 'r' for redo.")
+          gameLoop()
+        } else {
+          handleGameMenuInput(cardNumber.get, currentPlayer.hand.cards.length)
+        }
     }
   }
 

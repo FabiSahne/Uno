@@ -8,7 +8,7 @@ trait CardStrategy {
   def execute(gameController: GameController, color: Option[cardColors]): Unit
 }
 
-case class SkipCommand() extends CardStrategy {
+case class SkipStrategy() extends CardStrategy {
   override def execute(
       gameController: GameController,
       color: Option[cardColors] = None
@@ -19,7 +19,7 @@ case class SkipCommand() extends CardStrategy {
     )
 }
 
-case class ReverseCommand() extends CardStrategy {
+case class ReverseStrategy() extends CardStrategy {
   override def execute(
       gameController: GameController,
       color: Option[cardColors] = None
@@ -27,7 +27,7 @@ case class ReverseCommand() extends CardStrategy {
     println("Reverse command executed")
 }
 
-case class DrawTwoCommand() extends CardStrategy {
+case class DrawTwoStrategy() extends CardStrategy {
   override def execute(
       gameController: GameController,
       color: Option[cardColors] = None
@@ -45,7 +45,7 @@ case class DrawTwoCommand() extends CardStrategy {
     )
 }
 
-case class WildCommand() extends CardStrategy {
+case class WildStrategy() extends CardStrategy {
   override def execute(
       gameController: GameController,
       color: Option[cardColors]
@@ -55,7 +55,7 @@ case class WildCommand() extends CardStrategy {
     println("Wild command executed")
 }
 
-case class WildDrawFourCommand() extends CardStrategy {
+case class WildDrawFourStrategy() extends CardStrategy {
   override def execute(
       gameController: GameController,
       color: Option[cardColors]
