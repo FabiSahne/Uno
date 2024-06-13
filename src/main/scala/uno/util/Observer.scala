@@ -10,4 +10,4 @@ trait Observable:
   def notifyObservers(e: Event): Unit = subscribers.foreach(o => o.update(e))
   
 enum Event:
-  case Start, Quit, Play, Draw
+  case Start, Quit, Play, Draw, ChooseColor
