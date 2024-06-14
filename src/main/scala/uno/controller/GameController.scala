@@ -36,13 +36,14 @@ class GameController(var round: Round) extends Observable:
       quitGame()
       return
     }
-    saveState()
-    executeCommand(new PlayCommand, round)
+    // saveState()
+    val oldRound = round;
     round = round.copy(
       players = newPlayers,
       topCard = card,
       currentPlayer = (round.currentPlayer + 1) % round.players.length
     )
+    executeCommand(new PlayCommand, oldRound, round)
     card.getValue match {
       case cardValues.DRAW_TWO =>
         val strategy = new DrawTwoStrategy
@@ -86,12 +87,14 @@ class GameController(var round: Round) extends Observable:
 
   private def executeCommand(
       command: Command,
-      round: Round
+      oldRound: Round,
+      updatedRound: Round,
   ): Unit = {
     //command.execute(this, round)
     undoManager.addCommand(
       new PlayCommand,
-      round
+      oldRound,
+      updatedRound
     )
   }
 
