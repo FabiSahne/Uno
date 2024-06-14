@@ -1,13 +1,15 @@
-package uno.controller
+package uno.controller.GControllerImp
 
-import uno.models.*
-import uno.models.cardColors.*
+import uno.controller.GameControllerInterface
+import uno.models.cardComponent.cardImp.{Card, CardFacade, cardColors, cardValues}
+import uno.models.gameComponent.gameImp.Round
+import uno.models.playerComponent.playerImp.Player
+import uno.patterns.command.*
 import uno.patterns.memento.*
 import uno.patterns.strategy.*
-import uno.patterns.command.*
 import uno.util.*
 
-class GameController(var round: Round) extends Observable:
+class GameController(var round: Round) extends Observable with GameControllerInterface {
   private val caretaker = new Caretaker
   private val undoManager = new UndoManager
 
@@ -85,9 +87,9 @@ class GameController(var round: Round) extends Observable:
     notifyObservers(Event.Draw)
 
   private def executeCommand(
-      command: Command,
-      round: Round
-  ): Unit = {
+                              command: Command,
+                              round: Round
+                            ): Unit = {
     //command.execute(this, round)
     undoManager.addCommand(
       new PlayCommand,
@@ -100,3 +102,4 @@ class GameController(var round: Round) extends Observable:
 
   def restoreState(): Unit =
     caretaker.getMemento.foreach(memento => round = memento.round)
+}

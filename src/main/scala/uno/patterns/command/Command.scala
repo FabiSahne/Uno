@@ -1,7 +1,7 @@
 package uno.patterns.command
 
-import uno.controller.GameController
-import uno.models.Round
+import uno.controller.GControllerImp.GameController
+import uno.models.gameComponent.gameImp.Round
 import uno.patterns.memento.Memento
 
 trait Command {

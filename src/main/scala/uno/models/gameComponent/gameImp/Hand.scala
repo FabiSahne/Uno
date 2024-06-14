@@ -1,6 +1,9 @@
-package uno.models
+package uno.models.gameComponent.gameImp
 
-case class Hand(cards: List[Card] = CardFacade().randomCards(7)) {
+import uno.models.cardComponent.cardImp.{Card, CardFacade}
+import uno.models.gameComponent.IHand
+
+case class Hand(cards: List[Card] = CardFacade().randomCards(7)) extends IHand {
   def addCard(card: Card): Hand = copy(cards = card :: cards)
   
   def addCards(cardlist: List[Card]): Hand = copy(cards = cardlist ::: cards)

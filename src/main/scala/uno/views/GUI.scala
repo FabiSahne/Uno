@@ -7,7 +7,7 @@ import scalafx.scene.input.{KeyCode, KeyEvent}
 import scalafx.scene.layout.{Pane, StackPane}
 import scalafx.scene.paint.Color
 import scalafx.Includes.*
-import uno.controller.GameController
+import uno.controller.GControllerImp.GameController
 import uno.patterns.state.{GameState, State, WelcomeState}
 import uno.util.Event.*
 import uno.util.{Event, Observer}
