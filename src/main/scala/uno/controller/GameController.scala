@@ -1,17 +1,33 @@
 package uno.controller
 
-import uno.patterns.command.*
 import uno.models.*
+import uno.models.cardColors.*
 import uno.patterns.memento.*
+import uno.patterns.strategy.*
+import uno.patterns.command.*
 import uno.util.*
 
 class GameController(var round: Round) extends Observable:
   private val caretaker = new Caretaker
+  private val undoManager = new UndoManager
+
   def initGame(): Unit =
     notifyObservers(Event.Start)
+    startPlay()
+
+  def startPlay(): Unit =
+    notifyObservers(Event.Play)
 
   def quitGame(): Unit =
     notifyObservers(Event.Quit)
+
+  def undo(): Unit =
+    undoManager.undo(this)
+    notifyObservers(Event.Undo)
+
+  def redo(): Unit =
+    undoManager.redo(this)
+    notifyObservers(Event.Redo)
 
   def playCard(card: Card): Unit =
     val newPlayer = round.players(round.currentPlayer).playCard(card).get
@@ -21,6 +37,7 @@ class GameController(var round: Round) extends Observable:
       return
     }
     saveState()
+    executeCommand(new PlayCommand, round)
     round = round.copy(
       players = newPlayers,
       topCard = card,
@@ -28,23 +45,33 @@ class GameController(var round: Round) extends Observable:
     )
     card.getValue match {
       case cardValues.DRAW_TWO =>
-        val command = new DrawTwoCommand
-        executeCommand(command)
+        val strategy = new DrawTwoStrategy
+        strategy.execute(this)
       case cardValues.REVERSE =>
-        val command = new ReverseCommand
-        executeCommand(command)
+        val strategy = new ReverseStrategy
+        strategy.execute(this)
       case cardValues.SKIP =>
-        val command = new SkipCommand
-        executeCommand(command)
+        val strategy = new SkipStrategy
+        strategy.execute(this)
       case cardValues.WILD =>
-        val command = new WildCommand
-        executeCommand(command)
+        notifyObservers(Event.ChooseColor)
       case cardValues.WILD_DRAW_FOUR =>
-        val command = new WildDrawFourCommand
-        executeCommand(command)
+        notifyObservers(Event.ChooseColor)
       case _ => ()
     }
     notifyObservers(Event.Play)
+
+  def chooseColor(color: Int): Unit =
+    val strategy =
+      if round.topCard.getValue == cardValues.WILD then new WildStrategy
+      else new WildDrawFourStrategy
+    val card_color: Option[cardColors] = color match
+      case 1 => Some(cardColors.RED)
+      case 2 => Some(cardColors.BLUE)
+      case 3 => Some(cardColors.GREEN)
+      case 4 => Some(cardColors.YELLOW)
+      case _ => None
+    strategy.execute(this, card_color)
 
   def drawCard(): Unit =
     val newCard = CardFacade().randomCard
@@ -57,8 +84,15 @@ class GameController(var round: Round) extends Observable:
     round = round.copy(players = newPlayers)
     notifyObservers(Event.Draw)
 
-  private def executeCommand(command: Command): Unit = {
-    command.execute(this)
+  private def executeCommand(
+      command: Command,
+      round: Round
+  ): Unit = {
+    //command.execute(this, round)
+    undoManager.addCommand(
+      new PlayCommand,
+      round
+    )
   }
 
   private def saveState(): Unit =
