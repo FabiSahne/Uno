@@ -1,8 +1,9 @@
 package uno.patterns.state
 
 import scalafx.scene.image.{Image, ImageView}
-import uno.controller.GameController
 import scalafx.scene.layout.Pane
+import uno.controller.GControllerImp.GameController
+import uno.models.playerComponent.playerImp.Player
 import uno.views.GUI
 
 class GameState(gui: GUI, controller: GameController) extends State {
@@ -12,6 +13,12 @@ class GameState(gui: GUI, controller: GameController) extends State {
     val image = new Image(getClass.getResourceAsStream("/field/field.png"))
     val fieldImageView = new ImageView(image)
 
-    pane.children = List(fieldImageView)
+    val logo = new Image(getClass.getResourceAsStream("/field/logo.png"))
+    val logoImageView = new ImageView(logo) {
+      layoutX = 0
+      layoutY = 0
+    }
+
+    pane.children = List(fieldImageView, logoImageView)
   }
 }

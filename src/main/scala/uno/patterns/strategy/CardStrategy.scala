@@ -1,8 +1,11 @@
 package uno.patterns.strategy
 
-import uno.controller.GameController
-import uno.models.cardValues.WILD
-import uno.models.{Card, CardFacade, Player, WildCard, cardColors}
+import uno.controller.GControllerImp.GameController
+import uno.models.cardComponent.cardImp.{CardFacade, cardColors}
+import uno.models.cardComponent.cardTypeImp
+import uno.models.cardComponent.cardTypeImp.WildCard
+import uno.models.playerComponent.playerImp.Player
+import uno.models.cardComponent.cardImp.cardValues.WILD
 
 trait CardStrategy {
   def execute(gameController: GameController, color: Option[cardColors]): Unit
@@ -50,7 +53,7 @@ case class WildStrategy() extends CardStrategy {
       gameController: GameController,
       color: Option[cardColors]
   ): Unit =
-    val new_card = WildCard(color, WILD)
+    val new_card = cardTypeImp.WildCard(color, WILD)
     gameController.round = gameController.round.copy(topCard = new_card)
     println("Wild command executed")
 }
@@ -71,6 +74,6 @@ case class WildDrawFourStrategy() extends CardStrategy {
         )
       )
     )
-    val new_card = WildCard(color, WILD)
+    val new_card = cardTypeImp.WildCard(color, WILD)
     gameController.round = gameController.round.copy(topCard = new_card)
 }

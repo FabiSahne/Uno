@@ -1,14 +1,25 @@
 package uno
 
-import uno.controller.GameController
-import uno.models.Round
+import uno.controller.GControllerImp.GameController
+import uno.models.cardComponent.cardImp.CardFacade
+import uno.models.gameComponent.gameImp.{Hand, Round}
+import uno.models.playerComponent.playerImp.Player
 import uno.views.{GUI, TUI}
 
-@main def main(): Unit = {
-  val round = Round()
-  val controller = new GameController(round)
-  // GUI.launchApp(controller)
+import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
 
-   val tui = new TUI(controller)
-   tui.startGame()
+@main def main(): Unit = {
+  val players = List(Player(0, Hand(List())))
+  val topCard = CardFacade().randomCard
+  val currentPlayer = 0
+
+  val round = Round(players, topCard, currentPlayer)
+  val controller = new GameController(round)
+
+  Future {
+    val tui = new TUI(controller)
+    tui.startGame()
+  }
+  GUI.launchApp(controller)
 }

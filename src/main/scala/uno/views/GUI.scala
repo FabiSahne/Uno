@@ -3,13 +3,14 @@ package uno.views
 import scalafx.application.JFXApp3
 import scalafx.application.JFXApp3.PrimaryStage
 import scalafx.scene.Scene
+import scalafx.scene.input.{KeyCode, KeyEvent}
 import scalafx.scene.layout.{Pane, StackPane}
 import scalafx.scene.paint.Color
-import uno.controller.GameController
+import scalafx.Includes.*
+import uno.controller.GControllerImp.GameController
 import uno.patterns.state.{GameState, State, WelcomeState}
 import uno.util.Event.*
 import uno.util.{Event, Observer}
-
 
 class GUI(controller: GameController) extends JFXApp3 with Observer:
   controller.add(this)
@@ -38,19 +39,28 @@ class GUI(controller: GameController) extends JFXApp3 with Observer:
         content = rootPane
       }
     }
+    stage.scene().onKeyPressed = handleKeyPress
     display()
+  }
+
+  private def handleKeyPress: KeyEvent => Unit = {
+    case ke: KeyEvent if ke.code == KeyCode.Left =>
+      state = new WelcomeState(this, controller)
+      display()
+    case _ =>
   }
 
   override def update(e: Event): Unit = {
     e match {
       case Start =>
+        controller.startPlay()
         state = new GameState(this, controller)
         display()
       case Play =>
         state = new GameState(this, controller)
         display()
       case Quit =>
-      // ...
+      // close application
     }
   }
 

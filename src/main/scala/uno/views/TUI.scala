@@ -1,8 +1,8 @@
 package uno.views
 
+import uno.controller.GControllerImp.GameController
 import uno.models.*
 import uno.util.{Event, Observer}
-import uno.controller.GameController
 import uno.util.Event.*
 
 import scala.annotation.tailrec

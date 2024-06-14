@@ -1,5 +1,6 @@
-package uno.models
+package uno.models.cardComponent.cardImp
 
+import uno.models.cardComponent.ICard
 import scala.io.AnsiColor
 
 enum cardColors:
@@ -9,7 +10,7 @@ enum cardValues:
   case ZERO, ONE, TWO, THREE, FOUR, FIVE, SIX, SEVEN, EIGHT, NINE, SKIP,
     REVERSE, DRAW_TWO, WILD, WILD_DRAW_FOUR
 
-trait Card(color: Option[cardColors], value: cardValues) {
+abstract class Card(color: Option[cardColors], value: cardValues) extends ICard {
   def getColor: Option[cardColors] = color
   def getValue: cardValues = value
   def canBePlayedOn(topCard: Card): Boolean
