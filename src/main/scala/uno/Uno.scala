@@ -10,10 +10,10 @@ import scala.concurrent.Future
 @main def main(): Unit = {
   val round = Round()
   val controller = new GameController(round)
-  GUI.launchApp(controller)
 
-   Future {
-     val tui = new TUI(controller)
-     tui.startGame() 
-   }
+  Future {
+    val tui = new TUI(controller)
+    tui.startGame()
+  }
+  GUI.launchApp(controller)
 }

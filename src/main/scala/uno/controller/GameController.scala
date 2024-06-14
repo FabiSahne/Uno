@@ -1,6 +1,7 @@
 package uno.controller
 
 import uno.models.*
+import uno.models.cardColors.*
 import uno.patterns.memento.*
 import uno.patterns.strategy.*
 import uno.patterns.command.*
@@ -24,11 +25,9 @@ class GameController(var round: Round) extends Observable:
     undoManager.undo(this)
     notifyObservers(Event.Undo)
 
-
   def redo(): Unit =
     undoManager.redo(this)
     notifyObservers(Event.Redo)
-
 
   def playCard(card: Card): Unit =
     val newPlayer = round.players(round.currentPlayer).playCard(card).get
@@ -38,6 +37,7 @@ class GameController(var round: Round) extends Observable:
       return
     }
     saveState()
+    executeCommand(new PlayCommand, round)
     round = round.copy(
       players = newPlayers,
       topCard = card,
@@ -46,34 +46,32 @@ class GameController(var round: Round) extends Observable:
     card.getValue match {
       case cardValues.DRAW_TWO =>
         val strategy = new DrawTwoStrategy
-        executeStrategy(strategy)
+        strategy.execute(this)
       case cardValues.REVERSE =>
         val strategy = new ReverseStrategy
-        executeStrategy(strategy)
+        strategy.execute(this)
       case cardValues.SKIP =>
         val strategy = new SkipStrategy
-        executeStrategy(strategy)
+        strategy.execute(this)
       case cardValues.WILD =>
         notifyObservers(Event.ChooseColor)
       case cardValues.WILD_DRAW_FOUR =>
         notifyObservers(Event.ChooseColor)
-        val strategy = new WildDrawFourStrategy
-        executeStrategy(strategy)
       case _ => ()
     }
     notifyObservers(Event.Play)
 
   def chooseColor(color: Int): Unit =
-    val strategy = round.topCard.getValue match
-      case cardValues.WILD           => new WildStrategy
-      case cardValues.WILD_DRAW_FOUR => new WildDrawFourStrategy
+    val strategy =
+      if round.topCard.getValue == cardValues.WILD then new WildStrategy
+      else new WildDrawFourStrategy
     val card_color: Option[cardColors] = color match
       case 1 => Some(cardColors.RED)
       case 2 => Some(cardColors.BLUE)
       case 3 => Some(cardColors.GREEN)
       case 4 => Some(cardColors.YELLOW)
       case _ => None
-    executeStrategy(strategy, card_color)
+    strategy.execute(this, card_color)
 
   def drawCard(): Unit =
     val newCard = CardFacade().randomCard
@@ -86,15 +84,15 @@ class GameController(var round: Round) extends Observable:
     round = round.copy(players = newPlayers)
     notifyObservers(Event.Draw)
 
-  private def executeStrategy(strategy: CardStrategy, color: Option[cardColors] = None): Unit = {
-    val memento = Memento(round.copy())
-    strategy.execute(this, color)
-    undoManager.addCommand(new Command {
-      override def undo(gameController: GameController, memento: Memento): Unit =
-        gameController.round = memento.round
-      override def redo(gameController: GameController, memento: Memento): Unit =
-        gameController.round = memento.round
-    }, memento)
+  private def executeCommand(
+      command: Command,
+      round: Round
+  ): Unit = {
+    //command.execute(this, round)
+    undoManager.addCommand(
+      new PlayCommand,
+      round
+    )
   }
 
   private def saveState(): Unit =
