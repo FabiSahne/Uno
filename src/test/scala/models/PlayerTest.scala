@@ -3,6 +3,7 @@ package models
 import uno.models.*
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatest.matchers.should.Matchers.*
+import uno.models.cardComponent.cardImp.{cardColors, cardValues}
 import uno.models.cardComponent.cardTypeImp
 import uno.models.cardComponent.cardTypeImp.NormalCard
 import uno.models.gameComponent.gameImp.Hand

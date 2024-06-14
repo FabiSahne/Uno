@@ -3,6 +3,7 @@ package uno.controller
 import uno.models.*
 import uno.models.cardComponent.cardImp.Card
 import uno.util.*
+import uno.controller.GControllerImp
 
 trait GameControllerInterface extends Observable {
   def initGame(): Unit

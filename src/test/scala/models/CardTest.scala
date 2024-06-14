@@ -4,8 +4,8 @@ import uno.models.*
 import uno.util.*
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatest.matchers.should.Matchers.*
+import uno.models.cardComponent.cardImp.{cardColors, cardValues, randomColor, randomNormalValue, randomWildValue}
 import uno.models.cardComponent.cardTypeImp.{NormalCard, WildCard}
-import uno.models.cardComponent.{NormalCard, cardTypeImp}
 
 import scala.io.AnsiColor
 
@@ -20,35 +20,35 @@ class CardTest extends AnyWordSpec {
       card.value should be(cardValues.ZERO)
     }
     "have a color code" in {
-      val redCard = cardTypeImp.NormalCard(Some(cardColors.RED), cardValues.ZERO)
+      val redCard = NormalCard(Some(cardColors.RED), cardValues.ZERO)
       redCard.getColorCode should be(AnsiColor.RED)
-      val greenCard = cardTypeImp.NormalCard(Some(cardColors.GREEN), cardValues.ZERO)
+      val greenCard = NormalCard(Some(cardColors.GREEN), cardValues.ZERO)
       greenCard.getColorCode should be(AnsiColor.GREEN)
-      val blueCard = cardTypeImp.NormalCard(Some(cardColors.BLUE), cardValues.ZERO)
+      val blueCard = NormalCard(Some(cardColors.BLUE), cardValues.ZERO)
       blueCard.getColorCode should be(AnsiColor.BLUE)
-      val yellowCard = cardTypeImp.NormalCard(Some(cardColors.YELLOW), cardValues.ZERO)
+      val yellowCard = NormalCard(Some(cardColors.YELLOW), cardValues.ZERO)
       yellowCard.getColorCode should be(AnsiColor.YELLOW)
       val wildCard = WildCard(None, cardValues.WILD)
       wildCard.getColorCode should be(AnsiColor.WHITE)
     }
     "be able to be played on a card of the same color" in {
-      val card1 = cardTypeImp.NormalCard(Some(cardColors.RED), cardValues.ZERO)
-      val card2 = cardTypeImp.NormalCard(Some(cardColors.RED), cardValues.ONE)
+      val card1 = NormalCard(Some(cardColors.RED), cardValues.ZERO)
+      val card2 = NormalCard(Some(cardColors.RED), cardValues.ONE)
       card1.canBePlayedOn(card2) should be(true)
     }
     "be able to be played on a card of the same value" in {
-      val card1 = cardTypeImp.NormalCard(Some(cardColors.RED), cardValues.ZERO)
-      val card2 = cardTypeImp.NormalCard(Some(cardColors.BLUE), cardValues.ZERO)
+      val card1 = NormalCard(Some(cardColors.RED), cardValues.ZERO)
+      val card2 = NormalCard(Some(cardColors.BLUE), cardValues.ZERO)
       card1.canBePlayedOn(card2) should be(true)
     }
     "not be able to be played on a card of a different color and value" in {
-      val card1 = cardTypeImp.NormalCard(Some(cardColors.RED), cardValues.ZERO)
-      val card2 = cardTypeImp.NormalCard(Some(cardColors.BLUE), cardValues.ONE)
+      val card1 = NormalCard(Some(cardColors.RED), cardValues.ZERO)
+      val card2 = NormalCard(Some(cardColors.BLUE), cardValues.ONE)
       card1.canBePlayedOn(card2) should be(false)
     }
     "be able to be played on any card if it is a wild card" in {
       val card1 = WildCard(None, cardValues.WILD)
-      val card2 = cardTypeImp.NormalCard(Some(cardColors.BLUE), cardValues.ONE)
+      val card2 = NormalCard(Some(cardColors.BLUE), cardValues.ONE)
       card1.canBePlayedOn(card2) should be(true)
     }
     "give random color" in {

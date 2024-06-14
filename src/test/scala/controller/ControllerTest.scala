@@ -6,9 +6,11 @@ import uno.controller.*
 import org.scalatest.matchers.should.Matchers.*
 import org.scalatest.wordspec.AnyWordSpec
 import uno.controller.GControllerImp.GameController
-import uno.models.cardColors.*
-import uno.models.cardComponent.cardTypeImp.{NormalCard, WildCard}
-import uno.models.cardValues.*
+import uno.models.cardComponent.cardTypeImp.*
+import uno.models.cardComponent.cardImp.cardColors.*
+import uno.models.cardComponent.cardImp.cardValues.*
+import uno.models.cardComponent.cardTypeImp
+import uno.models.gameComponent.gameImp
 import uno.models.gameComponent.gameImp.{Hand, Round}
 import uno.models.playerComponent.playerImp
 import uno.models.playerComponent.playerImp.Player
@@ -26,7 +28,8 @@ class ControllerTest extends AnyWordSpec {
             Hand(List(NormalCard(Some(RED), ONE), NormalCard(Some(RED), TWO)))
           )
         ),
-        cardTypeImp.NormalCard(Some(RED), THREE)
+        cardTypeImp.NormalCard(Some(RED), THREE),
+        currentPlayer = 0
       )
     val controller = GameController(round)
     "notify its observers on quit" in {
@@ -76,7 +79,9 @@ class ControllerTest extends AnyWordSpec {
             0,
             Hand(List(cardTypeImp.NormalCard(Some(RED), ONE), cardTypeImp.NormalCard(Some(BLUE), TWO)))
           )
-        )
+        ),
+        cardTypeImp.NormalCard(Some(RED), THREE),
+        currentPlayer = 0
       )
     }
     "quit game" in {
@@ -109,7 +114,8 @@ class ControllerTest extends AnyWordSpec {
               )
             )
           ),
-          cardTypeImp.NormalCard(Some(RED), THREE)
+          cardTypeImp.NormalCard(Some(RED), THREE),
+          currentPlayer = 0
         )
       val controller = GameController(round)
       val cards = controller.round.players.head.hand.cards
@@ -144,7 +150,8 @@ class ControllerTest extends AnyWordSpec {
               Hand(List(cardTypeImp.NormalCard(Some(RED), ONE), cardTypeImp.NormalCard(Some(RED), TWO)))
             )
           ),
-          cardTypeImp.NormalCard(Some(RED), THREE)
+          cardTypeImp.NormalCard(Some(RED), THREE),
+          currentPlayer = 0
         )
       val controller = GameController(round)
       controller.playCard(cardTypeImp.NormalCard(Some(RED), ONE))

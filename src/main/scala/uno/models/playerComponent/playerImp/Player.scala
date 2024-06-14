@@ -7,15 +7,15 @@ import uno.models.playerComponent.IPlayer
 import scala.util.{Failure, Success, Try}
 
 case class Player(id: Int, hand: Hand) extends IPlayer {
-  def canPlay(card: Card): Boolean = {
+  override def canPlay(card: Card): Boolean = {
     hand.cards.exists(_.canBePlayedOn(card))
   }
 
-  def playCard(card: Card): Try[Player] = {
+  override def playCard(card: Card): Try[Player] = {
     if (canPlay(card)) {
-      Success(Player(id, hand.removeCard(card)))
+      Success(copy(hand = hand.removeCard(card)))
     } else {
-      Failure(IllegalArgumentException("Can't play that card"))
+      Failure(new IllegalArgumentException("Can't play that card"))
     }
   }
 }
