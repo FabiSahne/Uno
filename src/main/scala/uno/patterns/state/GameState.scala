@@ -13,12 +13,18 @@ class GameState(gui: GUI, controller: GameController) extends State {
     val image = new Image(getClass.getResourceAsStream("/field/field.png"))
     val fieldImageView = new ImageView(image)
 
-    val logo = new Image(getClass.getResourceAsStream("/field/logo.png"))
+    val logo = new Image(getClass.getResourceAsStream("/field/button.png"))
     val logoImageView = new ImageView(logo) {
-      layoutX = 0
-      layoutY = 0
+      layoutX = 100
+      layoutY = 300
+    }
+    
+    val top = new Image(getClass.getResourceAsStream("/cards/design/card_000.png"))
+    val topImageView = new ImageView(top) {
+      layoutX = 400
+      layoutY = 300
     }
 
-    pane.children = List(fieldImageView, logoImageView)
+    pane.children = List(fieldImageView, logoImageView, topImageView)
   }
 }
