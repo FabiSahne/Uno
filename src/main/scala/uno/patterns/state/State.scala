@@ -31,13 +31,13 @@ class WelcomeState(gui: GUI, controller: GameController) extends State {
 
     val welcomeText: Text = new Text("Welcome to Uno!") {
       font = Font.loadFont(getClass.getResourceAsStream("/font/undefined-medium.ttf"), 24).delegate
-      x = 220
-      y = 250
+      x = 390
+      y = 390
     }
 
     val menuOptions: TextFlow = new TextFlow {
-      layoutX = 170
-      layoutY = 280
+      layoutX = 360
+      layoutY = 410
       
       children = List(
         new Text("> Start a new game\n") {
@@ -97,8 +97,8 @@ class CreditsState(gui: GUI, controller: GameController) extends State {
           fill = Color.AntiqueWhite
         },
       )
-      layoutX = 100
-      layoutY = 220
+      layoutX = 290
+      layoutY = 380
     }
 
     pane.children = List(menuImageView, creditsText)

@@ -4,6 +4,7 @@ import uno.models.*
 import uno.util.{Event, Observer}
 import uno.controller.GameController
 import uno.util.Event.*
+import javafx.application.Platform
 
 import scala.annotation.tailrec
 import scala.io.StdIn
@@ -12,21 +13,25 @@ import scala.io.AnsiColor.*
 class TUI(val controller: GameController) extends Observer {
   controller.add(this)
 
-  override def update(e: Event): Unit =
-    e match {
-      case Quit =>
-        if (controller.round.players.exists(_.hand.cards.nonEmpty)) {
-          // Game was quit prematurely, do not call gameOver()
-        } else {
-          // Game ended naturally, call gameOver()
-          gameOver()
-        }
-      case ChooseColor => chooseColor()
-      case _           => gameLoop()
-    }
-    
+  override def update(e: Event): Unit = {
+    println(s"Received event: $e")  // Logging
+    Platform.runLater(() => {
+      e match {
+        case Quit =>
+          if (controller.round.players.exists(_.hand.cards.nonEmpty)) {
+            // Game was quit prematurely, do not call gameOver()
+          } else {
+            // Game ended naturally, call gameOver()
+            gameOver()
+          }
+        case ChooseColor => chooseColor()
+        case _           => gameLoop()
+      }
+    })
+  }
+
   @tailrec
-  private def chooseColor(): Unit =
+  private def chooseColor(): Unit = {
     println("Choose a color:")
     println("1: Red")
     println("2: Blue")
@@ -39,6 +44,7 @@ class TUI(val controller: GameController) extends Observer {
     } else {
       controller.chooseColor(selection)
     }
+  }
 
   def startGame(): Unit = {
     clearScreen()
@@ -82,6 +88,7 @@ class TUI(val controller: GameController) extends Observer {
 
   @tailrec
   private def gameLoop(): Unit = {
+    println("Entering game loop")  // Logging
     clearScreen()
     val currentPlayer = controller.round.players(controller.round.currentPlayer)
     println(s"Current player: Player ${controller.round.currentPlayer + 1}")
@@ -108,6 +115,7 @@ class TUI(val controller: GameController) extends Observer {
   }
 
   private def handleGameMenuInput(input: Int, handSize: Int): Unit = {
+    println(s"Handling game menu input: $input")  // Logging
     if (input < 1 || input > handSize) {
       println("Invalid card number. Please try again.")
       gameLoop()
@@ -147,8 +155,8 @@ class TUI(val controller: GameController) extends Observer {
   }
 
   private def gameOver(): Unit = {
+    println("Game over!")  // Logging
     clearScreen()
-    println("Game over!")
     val winnerIndex = controller.round.players.indexWhere(_.hand.cards.isEmpty)
     println(s"Player ${winnerIndex + 1} wins!")
   }
