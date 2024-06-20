@@ -36,8 +36,7 @@ class GameController(var round: Round) extends Observable:
       quitGame()
       return
     }
-    saveState()
-    executeCommand(new PlayCommand, round)
+    val oldRound = round
     round = round.copy(
       players = newPlayers,
       topCard = card,
@@ -59,6 +58,7 @@ class GameController(var round: Round) extends Observable:
         notifyObservers(Event.ChooseColor)
       case _ => ()
     }
+    executeCommand(new PlayCommand, oldRound, round)
     notifyObservers(Event.Play)
 
   def chooseColor(color: Int): Unit =
@@ -80,18 +80,21 @@ class GameController(var round: Round) extends Observable:
       round.players(round.currentPlayer).hand.addCard(newCard)
     )
     val newPlayers = round.players.updated(round.currentPlayer, newPlayer)
-    saveState()
+    val oldRound = round
     round = round.copy(players = newPlayers)
+    executeCommand(new PlayCommand, oldRound, round)
     notifyObservers(Event.Draw)
 
   private def executeCommand(
       command: Command,
-      round: Round
+      oldRound: Round,
+      updatedRound: Round
   ): Unit = {
-    //command.execute(this, round)
+    // command.execute(this, round)
     undoManager.addCommand(
       new PlayCommand,
-      round
+      oldRound,
+      updatedRound
     )
   }
 

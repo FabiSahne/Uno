@@ -51,10 +51,10 @@ class GUI(controller: GameController) extends JFXApp3 with Observer:
   }
 
   override def update(e: Event): Unit = {
+    println(s"GUI Received event: $e")
     e match {
       case Start =>
         Platform.runLater(() => {
-          controller.startPlay()
           state = new GameState(this, controller)
           display()
         })
@@ -64,9 +64,7 @@ class GUI(controller: GameController) extends JFXApp3 with Observer:
           display()
         })
       case Quit =>
-        Platform.runLater(() => {
-          // Handle quit event, e.g., close the application
-        })
+      // close application
     }
   }
 

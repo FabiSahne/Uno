@@ -3,28 +3,19 @@ package uno
 import uno.controller.GameController
 import uno.models.Round
 import uno.views.{GUI, TUI}
-import java.io.{FileOutputStream, PrintStream}
-import javafx.application.Platform
+import scala.concurrent.ExecutionContext.Implicits.global
 
-object Uno {
-  def main(args: Array[String]): Unit = {
-    val errStream = new PrintStream(new FileOutputStream("error.log"))
-    System.setErr(errStream)
-    val controller = GameController(Round())
-    new GUIThread(controller).start()
-    new TUIThread(controller).start()
+import scala.concurrent.Future
+
+@main def main(): Unit = {
+  val round = Round()
+  val controller = new GameController(round)
+
+  Future {
+    GUI.launchApp(controller)
   }
 
-  private class GUIThread(gameController: GameController) extends Thread {
-    override def run(): Unit = {
-      GUI(gameController).main(Array())
-    }
-  }
+  val tui = new TUI(controller)
 
-  private class TUIThread(gameController: GameController) extends Thread {
-    override def run(): Unit = {
-      val tui = TUI(gameController)
-      tui.startGame()
-    }
-  }
+  tui.startGame()
 }
