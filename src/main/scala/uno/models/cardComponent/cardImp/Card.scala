@@ -12,19 +12,20 @@ enum cardValues:
   case ZERO, ONE, TWO, THREE, FOUR, FIVE, SIX, SEVEN, EIGHT, NINE, SKIP,
     REVERSE, DRAW_TWO, WILD, WILD_DRAW_FOUR
 
-class Card @Inject (color: Option[cardColors], value: cardValues) extends ICard {
+class Card @Inject (color: Option[cardColors], value: cardValues)
+    extends ICard {
   def getColor: Option[cardColors] = color
   def getValue: cardValues = value
   def canBePlayedOn(topCard: ICard): Boolean =
     this.getValue == cardValues.WILD ||
-    (this.getColor match {
-      case None => true
-      case Some(c) =>
-        topCard.getColor match {
-          case None => true
-          case Some(tc) => c == tc
-        }
-    })
+      (this.getColor match {
+        case None => true
+        case Some(c) =>
+          topCard.getColor match {
+            case None     => true
+            case Some(tc) => c == tc
+          }
+      })
 
   def getColorCode: String = {
     this.getColor match {
@@ -36,6 +37,15 @@ class Card @Inject (color: Option[cardColors], value: cardValues) extends ICard 
     }
   }
 
+  def toXml: scala.xml.Elem =
+    <card>
+      <color>
+        {color}
+      </color>
+      <value>
+        {value}
+      </value>
+    </card>
 
 }
 
@@ -50,7 +60,6 @@ def randomNormalValue: cardValues =
 
 def randomWildValue: cardValues =
   List(cardValues.WILD, cardValues.WILD_DRAW_FOUR)(scala.util.Random.nextInt(2))
-
 
 def randomCard: Card = {
   val wildchance = 0.1

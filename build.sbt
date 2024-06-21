@@ -10,5 +10,7 @@ lazy val root = project
     libraryDependencies += "org.scalatest" %% "scalatest" % "3.2.18" % "test",
     libraryDependencies += "org.scalafx" %% "scalafx" % "22.0.0-R33",
     libraryDependencies += "net.codingwell" %% "scala-guice" % "7.0.0",
+    libraryDependencies += "org.scala-lang.modules" %% "scala-xml" % "2.3.0",
+    libraryDependencies += "org.playframework" %% "play-json" % "3.0.4",
     ThisBuild / coverageExcludedFiles := """.*uno/Main;.*/uno/views/.*"""
   )

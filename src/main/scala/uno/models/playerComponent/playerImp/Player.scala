@@ -1,9 +1,7 @@
 package uno.models.playerComponent.playerImp
 
 import uno.models.cardComponent.ICard
-import uno.models.cardComponent.cardImp.Card
 import uno.models.gameComponent.IHand
-import uno.models.gameComponent.gameImp.Hand
 import uno.models.playerComponent.IPlayer
 
 import scala.util.{Failure, Success, Try}
@@ -20,4 +18,14 @@ case class Player(id: Int, hand: IHand) extends IPlayer {
       Failure(new IllegalArgumentException("Can't play that card"))
     }
   }
+  
+  def toXml: scala.xml.Elem =
+    <player>
+      <id>
+        {id}
+      </id>
+      <hand>
+        {hand.toXml}
+      </hand>
+    </player>
 }

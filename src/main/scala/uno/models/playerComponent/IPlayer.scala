@@ -10,4 +10,5 @@ trait IPlayer {
   def hand: IHand
   def canPlay(card: ICard): Boolean
   def playCard(card: ICard): Try[IPlayer]
+  def toXml: scala.xml.Elem
 }
