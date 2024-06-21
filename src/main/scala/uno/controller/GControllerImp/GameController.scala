@@ -97,16 +97,10 @@ class GameController(var round: Round) extends Observable with GameControllerInt
   }
 
   private def executeCommand(
-<<<<<<< HEAD:src/main/scala/uno/controller/GControllerImp/GameController.scala
-                              command: Command,
-                              round: Round
-                            ): Unit = {
-=======
       command: Command,
       oldRound: Round,
       updatedRound: Round
   ): Unit = {
->>>>>>> dependency-inj:src/main/scala/uno/controller/GameController.scala
     // command.execute(this, round)
     undoManager.addCommand(
       new PlayCommand,
