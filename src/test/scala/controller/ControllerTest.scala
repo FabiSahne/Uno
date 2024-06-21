@@ -6,10 +6,9 @@ import uno.controller.*
 import org.scalatest.matchers.should.Matchers.*
 import org.scalatest.wordspec.AnyWordSpec
 import uno.controller.GControllerImp.GameController
-import uno.models.cardComponent.cardTypeImp.*
+import uno.models.cardComponent.cardImp.Card
 import uno.models.cardComponent.cardImp.cardColors.*
 import uno.models.cardComponent.cardImp.cardValues.*
-import uno.models.cardComponent.cardTypeImp
 import uno.models.gameComponent.gameImp
 import uno.models.gameComponent.gameImp.{Hand, Round}
 import uno.models.playerComponent.playerImp
@@ -25,15 +24,15 @@ class ControllerTest extends AnyWordSpec {
         List(
           Player(
             0,
-            Hand(List(NormalCard(Some(RED), ONE), NormalCard(Some(RED), TWO)))
+            Hand(List(Card(Some(RED), ONE), Card(Some(RED), TWO)))
           )
         ),
-        cardTypeImp.NormalCard(Some(RED), THREE),
+        Card(Some(RED), THREE),
         currentPlayer = 0
       )
     val controller = GameController(round)
     "notify its observers on quit" in {
-      class TestObserver(controller: GameController) extends Observer:
+      class TestObserver(controller: GameControllerInterface) extends Observer:
         controller.add(this)
         var bing = false
         def update(e: Event): Unit = bing = true
@@ -43,7 +42,7 @@ class ControllerTest extends AnyWordSpec {
       testObserver.bing should be(true)
     }
     "notify its observers on start" in {
-      class TestObserver(controller: GameController) extends Observer:
+      class TestObserver(controller: GameControllerInterface) extends Observer:
         controller.add(this)
         var bing = false
         def update(e: Event): Unit = bing = true
@@ -53,7 +52,7 @@ class ControllerTest extends AnyWordSpec {
       testObserver.bing should be(true)
     }
     "don't notify its observers on remove" in {
-      class TestObserver(val controller: GameController) extends Observer:
+      class TestObserver(val controller: GameControllerInterface) extends Observer:
         controller.add(this)
         var bing = false
 
@@ -66,7 +65,7 @@ class ControllerTest extends AnyWordSpec {
       testObserver.bing should be(false)
     }
     "play card" in {
-      val card = cardTypeImp.NormalCard(Some(RED), ONE)
+      val card = Card(Some(RED), ONE)
       controller.playCard(card)
       controller.round.players.head.hand.cards should not contain card
     }
@@ -77,15 +76,15 @@ class ControllerTest extends AnyWordSpec {
         List(
           playerImp.Player(
             0,
-            Hand(List(cardTypeImp.NormalCard(Some(RED), ONE), cardTypeImp.NormalCard(Some(BLUE), TWO)))
+            Hand(List(Card(Some(RED), ONE), Card(Some(BLUE), TWO)))
           )
         ),
-        cardTypeImp.NormalCard(Some(RED), THREE),
+        Card(Some(RED), THREE),
         currentPlayer = 0
       )
     }
     "quit game" in {
-      class TestObserver(val controller: GameController) extends Observer:
+      class TestObserver(val controller: GameControllerInterface) extends Observer:
         controller.add(this)
         var bing: Event = Start
         def update(e: Event): Unit = bing = e
@@ -104,17 +103,17 @@ class ControllerTest extends AnyWordSpec {
               0,
               Hand(
                 List(
-                  cardTypeImp.NormalCard(Some(RED), DRAW_TWO),
-                  cardTypeImp.NormalCard(Some(RED), REVERSE),
-                  cardTypeImp.NormalCard(Some(RED), SKIP),
-                  WildCard(None, WILD),
-                  WildCard(None, WILD_DRAW_FOUR),
-                  cardTypeImp.NormalCard(Some(RED), THREE)
+                  Card(Some(RED), DRAW_TWO),
+                  Card(Some(RED), REVERSE),
+                  Card(Some(RED), SKIP),
+                  Card(None, WILD),
+                  Card(None, WILD_DRAW_FOUR),
+                  Card(Some(RED), THREE)
                 )
               )
             )
           ),
-          cardTypeImp.NormalCard(Some(RED), THREE),
+          Card(Some(RED), THREE),
           currentPlayer = 0
         )
       val controller = GameController(round)
@@ -147,14 +146,14 @@ class ControllerTest extends AnyWordSpec {
           List(
             playerImp.Player(
               0,
-              Hand(List(cardTypeImp.NormalCard(Some(RED), ONE), cardTypeImp.NormalCard(Some(RED), TWO)))
+              Hand(List(Card(Some(RED), ONE), Card(Some(RED), TWO)))
             )
           ),
-          cardTypeImp.NormalCard(Some(RED), THREE),
+          Card(Some(RED), THREE),
           currentPlayer = 0
         )
       val controller = GameController(round)
-      controller.playCard(cardTypeImp.NormalCard(Some(RED), ONE))
+      controller.playCard(Card(Some(RED), ONE))
       controller.round should not be round
       controller.restoreState()
       controller.round should be(round)

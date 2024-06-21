@@ -3,8 +3,7 @@ package models
 import uno.models.*
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatest.matchers.should.Matchers.*
-import uno.models.cardComponent.cardImp.{CardFacade, cardColors, cardValues}
-import uno.models.cardComponent.cardTypeImp.NormalCard
+import uno.models.cardComponent.cardImp._
 import uno.models.gameComponent.gameImp.Hand
 
 class HandTest extends AnyWordSpec {
@@ -22,14 +21,14 @@ class HandTest extends AnyWordSpec {
     }
     "existing" should {
       "be able to get a card removed" in {
-        val hand = Hand(CardFacade().randomCards(2))
+        val hand = Hand(randomCards(2))
         val card = hand.cards.head
         val newHand = hand.removeCard(card)
         newHand.cards should be(hand.cards.tail)
       }
       "be able to get a card added" in {
-        val hand = Hand(CardFacade().randomCards(2))
-        val card = NormalCard(Some(cardColors.RED), cardValues.ZERO)
+        val hand = Hand(randomCards(2))
+        val card = Card(Some(cardColors.RED), cardValues.ZERO)
         val newHand = hand.addCard(card)
         newHand.cards should be(card +: hand.cards)
       }
