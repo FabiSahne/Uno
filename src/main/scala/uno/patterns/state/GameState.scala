@@ -3,10 +3,11 @@ package uno.patterns.state
 import scalafx.scene.image.{Image, ImageView}
 import scalafx.scene.layout.Pane
 import uno.controller.GControllerImp.GameController
+import uno.controller.GameControllerInterface
 import uno.models.playerComponent.playerImp.Player
 import uno.views.GUI
 
-class GameState(gui: GUI, controller: GameController) extends State {
+class GameState(gui: GUI, controller: GameControllerInterface) extends State {
   override def display(pane: Pane): Unit = {
     pane.children.clear()
 

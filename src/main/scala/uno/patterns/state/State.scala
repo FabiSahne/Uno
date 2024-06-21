@@ -6,6 +6,7 @@ import scalafx.scene.paint.Color
 import scalafx.scene.text.{Font, Text, TextFlow}
 import scalafx.Includes.*
 import uno.controller.GControllerImp.GameController
+import uno.controller.GameControllerInterface
 import uno.views.GUI
 
 trait State {
@@ -17,7 +18,7 @@ trait State {
   }
 }
 
-class WelcomeState(gui: GUI, controller: GameController) extends State {
+class WelcomeState(gui: GUI, controller: GameControllerInterface) extends State {
 
   private def displayCredits(): Unit = {
     gui.setState(new CreditsState(gui, controller))
@@ -70,7 +71,7 @@ class WelcomeState(gui: GUI, controller: GameController) extends State {
   }
 }
 
-class CreditsState(gui: GUI, controller: GameController) extends State {
+class CreditsState(gui: GUI, controller: GameControllerInterface) extends State {
   override def display(pane: Pane): Unit = {
     pane.children.clear()
 

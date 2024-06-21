@@ -1,9 +1,7 @@
 package uno.patterns.strategy
 
 import uno.controller.GControllerImp.GameController
-import uno.models.cardComponent.cardImp.{CardFacade, cardColors}
-import uno.models.cardComponent.cardTypeImp
-import uno.models.cardComponent.cardTypeImp.WildCard
+import uno.models.cardComponent.cardImp._
 import uno.models.playerComponent.playerImp.Player
 import uno.models.cardComponent.cardImp.cardValues.WILD
 
@@ -36,7 +34,7 @@ case class DrawTwoStrategy() extends CardStrategy {
       color: Option[cardColors] = None
   ): Unit =
     val idx = gameController.round.currentPlayer
-    val cards = List.fill(2)(CardFacade().randomCard)
+    val cards = List.fill(2)(randomCard)
     gameController.round = gameController.round.copy(
       players = gameController.round.players.updated(
         idx,
@@ -53,7 +51,8 @@ case class WildStrategy() extends CardStrategy {
       gameController: GameController,
       color: Option[cardColors]
   ): Unit =
-    val new_card = cardTypeImp.WildCard(color, WILD)
+//    val new_card = cardTypeImp.WildCard(color, WILD)
+    val new_card = Card(color, WILD)
     gameController.round = gameController.round.copy(topCard = new_card)
     println("Wild command executed")
 }
@@ -63,17 +62,19 @@ case class WildDrawFourStrategy() extends CardStrategy {
       gameController: GameController,
       color: Option[cardColors]
   ): Unit =
-    val idx = gameController.round.currentPlayer
-    val cards = List.fill(4)(CardFacade().randomCard)
-    gameController.round = gameController.round.copy(
-      players = gameController.round.players.updated(
-        idx,
-        Player(
-          gameController.round.currentPlayer,
-          gameController.round.players(idx).hand.addCards(cards)
+    val idx = gameController.getRound.currentPlayer
+    val cards = List.fill(4)(randomCard)
+    gameController.setRound(
+      gameController.getRound.copy(
+        players = gameController.getRound.players.updated(
+          idx,
+          Player(
+            gameController.getRound.currentPlayer,
+            gameController.getRound.players(idx).hand.addCards(cards)
+          )
         )
       )
     )
-    val new_card = cardTypeImp.WildCard(color, WILD)
-    gameController.round = gameController.round.copy(topCard = new_card)
+    val new_card = Card(color, WILD)
+    gameController.setRound(gameController.getRound.copy(topCard = new_card))
 }

@@ -5,12 +5,13 @@ import uno.models.*
 import uno.util.{Event, Observer}
 import uno.util.Event.*
 import javafx.application.Platform
+import uno.controller.GameControllerInterface
 
 import scala.annotation.tailrec
 import scala.io.StdIn
 import scala.io.AnsiColor.*
 
-class TUI(val controller: GameController) extends Observer {
+class TUI(val controller: GameControllerInterface) extends Observer {
   controller.add(this)
   var gameStarted = false
 
@@ -19,7 +20,7 @@ class TUI(val controller: GameController) extends Observer {
     Platform.runLater(() => {
       e match {
         case Quit =>
-          if (controller.round.players.exists(_.hand.cards.nonEmpty)) {
+          if (controller.getRound.players.exists(_.hand.cards.nonEmpty)) {
             // Game was quit prematurely, do not call gameOver()
           } else {
             // Game ended naturally, call gameOver()
@@ -98,10 +99,10 @@ class TUI(val controller: GameController) extends Observer {
   private def gameLoop(): Unit = {
     println("Entering game loop") // Logging
     clearScreen()
-    val currentPlayer = controller.round.players(controller.round.currentPlayer)
-    println(s"Current player: Player ${controller.round.currentPlayer + 1}")
+    val currentPlayer = controller.getRound.players(controller.getRound.currentPlayer)
+    println(s"Current player: Player ${controller.getRound.currentPlayer + 1}")
     println(
-      s"Current top card: ${controller.round.topCard.getColorCode}${controller.round.topCard.getValue}$RESET"
+      s"Current top card: ${controller.getRound.topCard.getColorCode}${controller.getRound.topCard.getValue}$RESET"
     )
     currentPlayer.hand.cards.zipWithIndex.foreach { case (card, index) =>
       println(s"${index + 1}: ${card.getColorCode}${card.getValue}$RESET")
@@ -127,7 +128,7 @@ class TUI(val controller: GameController) extends Observer {
           inputLoop()
         } else {
           val currentPlayer =
-            controller.round.players(controller.round.currentPlayer)
+            controller.getRound.players(controller.getRound.currentPlayer)
           handleGameMenuInput(cardNumber.get, currentPlayer.hand.cards.length)
         }
     }
@@ -138,14 +139,14 @@ class TUI(val controller: GameController) extends Observer {
       println("Invalid card number. Please try again.")
       gameLoop()
     } else {
-      val card = controller.round
-        .players(controller.round.currentPlayer)
+      val card = controller.getRound
+        .players(controller.getRound.currentPlayer)
         .hand
         .cards(input - 1)
       if (
-        controller.round
-          .players(controller.round.currentPlayer)
-          .canPlay(card) && card.canBePlayedOn(controller.round.topCard)
+        controller.getRound
+          .players(controller.getRound.currentPlayer)
+          .canPlay(card) && card.canBePlayedOn(controller.getRound.topCard)
       ) {
         controller.playCard(card)
       } else {
@@ -175,7 +176,7 @@ class TUI(val controller: GameController) extends Observer {
   private def gameOver(): Unit = {
     println("Game over!") // Logging
     clearScreen()
-    val winnerIndex = controller.round.players.indexWhere(_.hand.cards.isEmpty)
+    val winnerIndex = controller.getRound.players.indexWhere(_.hand.cards.isEmpty)
     println(s"Player ${winnerIndex + 1} wins!")
   }
 }

@@ -8,11 +8,12 @@ import scalafx.scene.layout.{Pane, StackPane}
 import scalafx.scene.paint.Color
 import scalafx.Includes.*
 import uno.controller.GControllerImp.GameController
+import uno.controller.GameControllerInterface
 import uno.patterns.state.{GameState, State, WelcomeState}
 import uno.util.Event.*
 import uno.util.{Event, Observer}
 
-class GUI(controller: GameController) extends JFXApp3 with Observer:
+class GUI(controller: GameControllerInterface) extends JFXApp3 with Observer:
   controller.add(this)
 
   private var state: State = new WelcomeState(this, controller)
@@ -69,7 +70,7 @@ class GUI(controller: GameController) extends JFXApp3 with Observer:
   }
 
 object GUI {
-  def launchApp(controller: GameController): Unit = {
+  def launchApp(controller: GameControllerInterface): Unit = {
     new GUI(controller).main(Array.empty)
   }
 }

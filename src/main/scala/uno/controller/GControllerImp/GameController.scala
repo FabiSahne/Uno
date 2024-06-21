@@ -1,17 +1,28 @@
 package uno.controller.GControllerImp
 
+import com.google.inject.Inject
 import uno.controller.GameControllerInterface
-import uno.models.cardComponent.cardImp._
+import uno.models.cardComponent.cardImp.*
+import uno.models.gameComponent.IRound
 import uno.models.gameComponent.gameImp.Round
+import uno.models.cardComponent.ICard
 import uno.models.playerComponent.playerImp.Player
-import uno.patterns.command._
-import uno.patterns.memento._
-import uno.patterns.strategy._
-import uno.util._
+import uno.patterns.command.*
+import uno.patterns.memento.*
+import uno.patterns.strategy.*
+import uno.util.*
 
-class GameController(var round: Round) extends Observable with GameControllerInterface {
+class GameController @Inject() (var round: IRound)
+    extends Observable
+    with GameControllerInterface {
   private val caretaker = new Caretaker
   private val undoManager = new UndoManager
+
+  def getRound: IRound = round
+
+  def setRound(round: IRound): Unit = {
+    this.round = round
+  }
 
   def initGame(): Unit = {
     notifyObservers(Event.Start)
@@ -36,7 +47,7 @@ class GameController(var round: Round) extends Observable with GameControllerInt
     notifyObservers(Event.Redo)
   }
 
-  def playCard(card: Card): Unit = {
+  def playCard(card: ICard): Unit = {
     val newPlayer = round.players(round.currentPlayer).playCard(card).get
     val newPlayers = round.players.updated(round.currentPlayer, newPlayer)
     if (newPlayer.hand.cards.isEmpty) {
@@ -44,7 +55,7 @@ class GameController(var round: Round) extends Observable with GameControllerInt
       return
     }
     val oldRound = round
-    round = round.copy(
+    round = Round(
       players = newPlayers,
       topCard = card,
       currentPlayer = (round.currentPlayer + 1) % round.players.length
@@ -84,7 +95,7 @@ class GameController(var round: Round) extends Observable with GameControllerInt
   }
 
   def drawCard(): Unit = {
-    val newCard = CardFacade().randomCard
+    val newCard = randomCard
     val newPlayer = Player(
       round.currentPlayer,
       round.players(round.currentPlayer).hand.addCard(newCard)
@@ -98,8 +109,8 @@ class GameController(var round: Round) extends Observable with GameControllerInt
 
   private def executeCommand(
       command: Command,
-      oldRound: Round,
-      updatedRound: Round
+      oldRound: IRound,
+      updatedRound: IRound
   ): Unit = {
     // command.execute(this, round)
     undoManager.addCommand(

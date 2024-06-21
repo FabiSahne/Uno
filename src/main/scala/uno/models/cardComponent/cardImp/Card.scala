@@ -1,6 +1,8 @@
 package uno.models.cardComponent.cardImp
 
+import com.google.inject.Inject
 import uno.models.cardComponent.ICard
+
 import scala.io.AnsiColor
 
 enum cardColors:
@@ -10,10 +12,19 @@ enum cardValues:
   case ZERO, ONE, TWO, THREE, FOUR, FIVE, SIX, SEVEN, EIGHT, NINE, SKIP,
     REVERSE, DRAW_TWO, WILD, WILD_DRAW_FOUR
 
-abstract class Card(color: Option[cardColors], value: cardValues) extends ICard {
+class Card @Inject (color: Option[cardColors], value: cardValues) extends ICard {
   def getColor: Option[cardColors] = color
   def getValue: cardValues = value
-  def canBePlayedOn(topCard: Card): Boolean
+  def canBePlayedOn(topCard: ICard): Boolean =
+    this.getValue == cardValues.WILD ||
+    (this.getColor match {
+      case None => true
+      case Some(c) =>
+        topCard.getColor match {
+          case None => true
+          case Some(tc) => c == tc
+        }
+    })
 
   def getColorCode: String = {
     this.getColor match {
@@ -24,6 +35,8 @@ abstract class Card(color: Option[cardColors], value: cardValues) extends ICard 
       case Some(cardColors.BLUE)   => AnsiColor.BLUE
     }
   }
+
+
 }
 
 def randomColor: cardColors =
@@ -37,3 +50,15 @@ def randomNormalValue: cardValues =
 
 def randomWildValue: cardValues =
   List(cardValues.WILD, cardValues.WILD_DRAW_FOUR)(scala.util.Random.nextInt(2))
+
+
+def randomCard: Card = {
+  val wildchance = 0.1
+  if (scala.util.Random.nextDouble() < wildchance) {
+    Card(None, randomWildValue)
+  } else {
+    Card(Some(randomColor), randomNormalValue)
+  }
+}
+
+def randomCards(n: Int): List[Card] = List.fill(n)(randomCard)

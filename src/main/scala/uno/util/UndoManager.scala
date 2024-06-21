@@ -1,17 +1,18 @@
 package uno.util
 
 import uno.controller.GControllerImp.GameController
+import uno.models.gameComponent.IRound
 import uno.models.gameComponent.gameImp.Round
 import uno.patterns.command.Command
 
 class UndoManager {
-  private var undoStack: List[(Command, Round, Round)] = List()
-  private var redoStack: List[(Command, Round, Round)] = List()
+  private var undoStack: List[(Command, IRound, IRound)] = List()
+  private var redoStack: List[(Command, IRound, IRound)] = List()
 
   def addCommand(
       command: Command,
-      oldRound: Round,
-      updatedRound: Round
+      oldRound: IRound,
+      updatedRound: IRound
   ): Unit = {
     undoStack = (command, oldRound, updatedRound) :: undoStack
     redoStack = List()
