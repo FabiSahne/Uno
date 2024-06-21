@@ -1,6 +1,6 @@
 package uno.views
 
-import scalafx.application.JFXApp3
+import scalafx.application.{JFXApp3, Platform}
 import scalafx.application.JFXApp3.PrimaryStage
 import scalafx.scene.Scene
 import scalafx.scene.input.{KeyCode, KeyEvent}
@@ -51,14 +51,18 @@ class GUI(controller: GameController) extends JFXApp3 with Observer:
   }
 
   override def update(e: Event): Unit = {
+    println(s"GUI Received event: $e")
     e match {
       case Start =>
-        controller.startPlay()
-        state = new GameState(this, controller)
-        display()
+        Platform.runLater(() => {
+          state = new GameState(this, controller)
+          display()
+        })
       case Play =>
-        state = new GameState(this, controller)
-        display()
+        Platform.runLater(() => {
+          state = new GameState(this, controller)
+          display()
+        })
       case Quit =>
       // close application
     }

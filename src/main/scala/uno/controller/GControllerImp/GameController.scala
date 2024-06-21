@@ -43,8 +43,7 @@ class GameController(var round: Round) extends Observable with GameControllerInt
       quitGame()
       return
     }
-    saveState()
-    executeCommand(new PlayCommand, round)
+    val oldRound = round
     round = round.copy(
       players = newPlayers,
       topCard = card,
@@ -66,6 +65,7 @@ class GameController(var round: Round) extends Observable with GameControllerInt
         notifyObservers(Event.ChooseColor)
       case _ => ()
     }
+    executeCommand(new PlayCommand, oldRound, round)
     notifyObservers(Event.Play)
   }
 
@@ -90,19 +90,28 @@ class GameController(var round: Round) extends Observable with GameControllerInt
       round.players(round.currentPlayer).hand.addCard(newCard)
     )
     val newPlayers = round.players.updated(round.currentPlayer, newPlayer)
-    saveState()
+    val oldRound = round
     round = round.copy(players = newPlayers)
+    executeCommand(new PlayCommand, oldRound, round)
     notifyObservers(Event.Draw)
   }
 
   private def executeCommand(
+<<<<<<< HEAD:src/main/scala/uno/controller/GControllerImp/GameController.scala
                               command: Command,
                               round: Round
                             ): Unit = {
+=======
+      command: Command,
+      oldRound: Round,
+      updatedRound: Round
+  ): Unit = {
+>>>>>>> dependency-inj:src/main/scala/uno/controller/GameController.scala
     // command.execute(this, round)
     undoManager.addCommand(
       new PlayCommand,
-      round
+      oldRound,
+      updatedRound
     )
   }
 

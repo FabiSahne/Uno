@@ -18,8 +18,10 @@ import scala.concurrent.Future
   val controller = new GameController(round)
 
   Future {
-    val tui = new TUI(controller)
-    tui.startGame()
+    GUI.launchApp(controller)
   }
-  GUI.launchApp(controller)
+
+  val tui = new TUI(controller)
+
+  tui.startGame()
 }
