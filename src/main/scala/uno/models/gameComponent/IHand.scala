@@ -1,9 +1,10 @@
 package uno.models.gameComponent
 
+import uno.models.cardComponent.ICard
 import uno.models.cardComponent.cardImp.Card
 
-trait IHand {
-  def addCard(card: Card): IHand
-  def addCards(cardlist: List[Card]): IHand
-  def removeCard(card: Card): IHand
+trait IHand(val cards: List[ICard]) {
+  def addCard(card: ICard): IHand
+  def addCards(cardlist: List[ICard]): IHand
+  def removeCard(card: ICard): IHand
 }

@@ -6,6 +6,7 @@ import scalafx.scene.paint.Color
 import scalafx.scene.text.{Font, Text, TextFlow}
 import scalafx.Includes.*
 import uno.controller.GControllerImp.GameController
+import uno.controller.GameControllerInterface
 import uno.views.GUI
 
 trait State {
@@ -17,7 +18,7 @@ trait State {
   }
 }
 
-class WelcomeState(gui: GUI, controller: GameController) extends State {
+class WelcomeState(gui: GUI, controller: GameControllerInterface) extends State {
 
   private def displayCredits(): Unit = {
     gui.setState(new CreditsState(gui, controller))
@@ -31,13 +32,13 @@ class WelcomeState(gui: GUI, controller: GameController) extends State {
 
     val welcomeText: Text = new Text("Welcome to Uno!") {
       font = Font.loadFont(getClass.getResourceAsStream("/font/undefined-medium.ttf"), 24).delegate
-      x = 220
-      y = 250
+      x = 390
+      y = 390
     }
 
     val menuOptions: TextFlow = new TextFlow {
-      layoutX = 170
-      layoutY = 280
+      layoutX = 360
+      layoutY = 410
       
       children = List(
         new Text("> Start a new game\n") {
@@ -70,7 +71,7 @@ class WelcomeState(gui: GUI, controller: GameController) extends State {
   }
 }
 
-class CreditsState(gui: GUI, controller: GameController) extends State {
+class CreditsState(gui: GUI, controller: GameControllerInterface) extends State {
   override def display(pane: Pane): Unit = {
     pane.children.clear()
 
@@ -97,8 +98,8 @@ class CreditsState(gui: GUI, controller: GameController) extends State {
           fill = Color.AntiqueWhite
         },
       )
-      layoutX = 100
-      layoutY = 220
+      layoutX = 290
+      layoutY = 380
     }
 
     pane.children = List(menuImageView, creditsText)

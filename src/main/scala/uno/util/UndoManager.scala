@@ -1,35 +1,40 @@
 package uno.util
 
 import uno.controller.GControllerImp.GameController
+import uno.models.gameComponent.IRound
 import uno.models.gameComponent.gameImp.Round
 import uno.patterns.command.Command
 
 class UndoManager {
-  private var undoStack: List[(Command, Round)] = List()
-  private var redoStack: List[(Command, Round)] = List()
-  
-  def addCommand(command: Command, round: Round): Unit = {
-    undoStack = (command, round) :: undoStack
+  private var undoStack: List[(Command, IRound, IRound)] = List()
+  private var redoStack: List[(Command, IRound, IRound)] = List()
+
+  def addCommand(
+      command: Command,
+      oldRound: IRound,
+      updatedRound: IRound
+  ): Unit = {
+    undoStack = (command, oldRound, updatedRound) :: undoStack
     redoStack = List()
   }
 
   def undo(gameController: GameController): Unit = {
     undoStack match {
       case Nil => println("Nothing to undo")
-      case (command, round) :: tail =>
-        command.undo(gameController, round)
+      case (command, oldRound, updatedRound) :: tail =>
+        command.undo(gameController, oldRound)
         undoStack = tail
-        redoStack = (command, round) :: redoStack
+        redoStack = (command, oldRound, updatedRound) :: redoStack
     }
   }
 
   def redo(gameController: GameController): Unit = {
     redoStack match {
       case Nil => println("Nothing to redo")
-      case (command, round) :: tail =>
-        command.redo(gameController, round)
+      case (command, oldRound, updatedRound) :: tail =>
+        command.redo(gameController, updatedRound)
         redoStack = tail
-        undoStack = (command, round) :: undoStack
+        undoStack = (command, oldRound, updatedRound) :: undoStack
     }
   }
 }

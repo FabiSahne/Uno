@@ -6,4 +6,5 @@ trait ICard {
   def getColor: Option[cardColors]
   def getValue: cardValues
   def getColorCode: String
+  def canBePlayedOn(topCard: ICard): Boolean
 }
