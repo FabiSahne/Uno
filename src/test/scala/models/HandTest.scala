@@ -1,9 +1,11 @@
 package models
 
-import uno.models._
-
+import uno.models.*
 import org.scalatest.wordspec.AnyWordSpec
-import org.scalatest.matchers.should.Matchers._
+import org.scalatest.matchers.should.Matchers.*
+import uno.models.cardComponent.cardImp.{CardFacade, cardColors, cardValues}
+import uno.models.cardComponent.cardTypeImp.NormalCard
+import uno.models.gameComponent.gameImp.Hand
 
 class HandTest extends AnyWordSpec {
   "Hand" when {

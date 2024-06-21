@@ -1,9 +1,9 @@
 package uno.patterns.state
 
 import scalafx.scene.image.{Image, ImageView}
-import uno.controller.GameController
 import scalafx.scene.layout.Pane
-import uno.models.Player
+import uno.controller.GControllerImp.GameController
+import uno.models.playerComponent.playerImp.Player
 import uno.views.GUI
 
 class GameState(gui: GUI, controller: GameController) extends State {

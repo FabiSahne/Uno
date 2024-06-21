@@ -1,10 +1,13 @@
-package uno.models
+package uno.models.cardComponent.cardImp
+
+import uno.models.cardComponent.ICardFacade
+import uno.models.cardComponent.cardTypeImp.{NormalCard, WildCard}
 
 import scala.util.Random
 
 private val WILD_CHANCE = 0.10
 
-class CardFacade {
+class CardFacade extends ICardFacade {
   def randomCard: Card =
     if (Random.nextDouble() < WILD_CHANCE) {
       WildCard(None, randomWildValue)

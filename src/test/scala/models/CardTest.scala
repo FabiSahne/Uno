@@ -4,6 +4,8 @@ import uno.models.*
 import uno.util.*
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatest.matchers.should.Matchers.*
+import uno.models.cardComponent.cardImp.{cardColors, cardValues, randomColor, randomNormalValue, randomWildValue}
+import uno.models.cardComponent.cardTypeImp.{NormalCard, WildCard}
 
 import scala.io.AnsiColor
 

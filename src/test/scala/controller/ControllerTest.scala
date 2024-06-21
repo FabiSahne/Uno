@@ -5,8 +5,15 @@ import uno.util.*
 import uno.controller.*
 import org.scalatest.matchers.should.Matchers.*
 import org.scalatest.wordspec.AnyWordSpec
-import uno.models.cardColors.*
-import uno.models.cardValues.*
+import uno.controller.GControllerImp.GameController
+import uno.models.cardComponent.cardTypeImp.*
+import uno.models.cardComponent.cardImp.cardColors.*
+import uno.models.cardComponent.cardImp.cardValues.*
+import uno.models.cardComponent.cardTypeImp
+import uno.models.gameComponent.gameImp
+import uno.models.gameComponent.gameImp.{Hand, Round}
+import uno.models.playerComponent.playerImp
+import uno.models.playerComponent.playerImp.Player
 import uno.util.Event.Start
 
 import java.io.ByteArrayOutputStream
@@ -21,7 +28,8 @@ class ControllerTest extends AnyWordSpec {
             Hand(List(NormalCard(Some(RED), ONE), NormalCard(Some(RED), TWO)))
           )
         ),
-        NormalCard(Some(RED), THREE)
+        cardTypeImp.NormalCard(Some(RED), THREE),
+        currentPlayer = 0
       )
     val controller = GameController(round)
     "notify its observers on quit" in {
@@ -58,7 +66,7 @@ class ControllerTest extends AnyWordSpec {
       testObserver.bing should be(false)
     }
     "play card" in {
-      val card = NormalCard(Some(RED), ONE)
+      val card = cardTypeImp.NormalCard(Some(RED), ONE)
       controller.playCard(card)
       controller.round.players.head.hand.cards should not contain card
     }
@@ -67,11 +75,13 @@ class ControllerTest extends AnyWordSpec {
       controller.round.players.head.hand.cards.size should be(2)
       controller.round = Round(
         List(
-          Player(
+          playerImp.Player(
             0,
-            Hand(List(NormalCard(Some(RED), ONE), NormalCard(Some(BLUE), TWO)))
+            Hand(List(cardTypeImp.NormalCard(Some(RED), ONE), cardTypeImp.NormalCard(Some(BLUE), TWO)))
           )
-        )
+        ),
+        cardTypeImp.NormalCard(Some(RED), THREE),
+        currentPlayer = 0
       )
     }
     "quit game" in {
@@ -88,23 +98,24 @@ class ControllerTest extends AnyWordSpec {
     }
     "send commands" in {
       val round =
-        Round(
+        gameImp.Round(
           List(
-            Player(
+            playerImp.Player(
               0,
               Hand(
                 List(
-                  NormalCard(Some(RED), DRAW_TWO),
-                  NormalCard(Some(RED), REVERSE),
-                  NormalCard(Some(RED), SKIP),
+                  cardTypeImp.NormalCard(Some(RED), DRAW_TWO),
+                  cardTypeImp.NormalCard(Some(RED), REVERSE),
+                  cardTypeImp.NormalCard(Some(RED), SKIP),
                   WildCard(None, WILD),
                   WildCard(None, WILD_DRAW_FOUR),
-                  NormalCard(Some(RED), THREE)
+                  cardTypeImp.NormalCard(Some(RED), THREE)
                 )
               )
             )
           ),
-          NormalCard(Some(RED), THREE)
+          cardTypeImp.NormalCard(Some(RED), THREE),
+          currentPlayer = 0
         )
       val controller = GameController(round)
       val cards = controller.round.players.head.hand.cards
@@ -132,17 +143,18 @@ class ControllerTest extends AnyWordSpec {
     }
     "save and restore state" in {
       val round =
-        Round(
+        gameImp.Round(
           List(
-            Player(
+            playerImp.Player(
               0,
-              Hand(List(NormalCard(Some(RED), ONE), NormalCard(Some(RED), TWO)))
+              Hand(List(cardTypeImp.NormalCard(Some(RED), ONE), cardTypeImp.NormalCard(Some(RED), TWO)))
             )
           ),
-          NormalCard(Some(RED), THREE)
+          cardTypeImp.NormalCard(Some(RED), THREE),
+          currentPlayer = 0
         )
       val controller = GameController(round)
-      controller.playCard(NormalCard(Some(RED), ONE))
+      controller.playCard(cardTypeImp.NormalCard(Some(RED), ONE))
       controller.round should not be round
       controller.restoreState()
       controller.round should be(round)
