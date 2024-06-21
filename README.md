@@ -12,7 +12,6 @@ This is our (Fabian W, Selin K) project for the Software Engineering course at t
 
 ## How to play:
 
-----
 1. Clone the repository
 ```fish
 git clone https://github.com/FabiSahne/Uno.git
@@ -28,11 +27,9 @@ sbt run
 
 ## Contribute
 
----
 If you want to contribute to this project, you can fork this repository and create a pull request. We are happy about every contribution.
 For other changes, please open an issue.
 
 ## License
 
----
 This project is licensed under the GPL-3.0 License. It does not grant any rights to use any trademarks or trade names used within the project.
