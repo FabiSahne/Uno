@@ -28,4 +28,7 @@ import scala.concurrent.Future
   val tui = new TUI(controller)
 
   tui.startGame()
+  
+  while true do
+    tui.inputLoop()
 }

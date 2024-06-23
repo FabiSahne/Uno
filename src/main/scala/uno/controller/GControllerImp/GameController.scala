@@ -4,7 +4,7 @@ import com.google.inject.Inject
 import uno.controller.GameControllerInterface
 import uno.models.cardComponent.cardImp.*
 import uno.models.gameComponent.IRound
-import uno.models.gameComponent.gameImp.Round
+import uno.models.gameComponent.gameImp.{Hand, Round}
 import uno.models.cardComponent.ICard
 import uno.models.playerComponent.playerImp.Player
 import uno.patterns.command.*
@@ -25,6 +25,11 @@ class GameController @Inject() (var round: IRound)
   }
 
   def initGame(): Unit = {
+    round = Round(
+      players = (0 until 4).map(i => Player(i, Hand(List.fill(7)(randomCard)))).toList,
+      topCard = Card(Some(randomColor), randomNormalValue),
+      currentPlayer = 0
+    )
     notifyObservers(Event.Start)
     startPlay()
   }

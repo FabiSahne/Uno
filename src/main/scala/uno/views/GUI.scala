@@ -65,7 +65,10 @@ class GUI(controller: GameControllerInterface) extends JFXApp3 with Observer:
           display()
         })
       case Quit =>
-      // close application
+        // close application
+        Platform.exit()
+      case _ =>
+      // TODO
     }
   }
 
