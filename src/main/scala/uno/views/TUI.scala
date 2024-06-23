@@ -13,7 +13,7 @@ import scala.io.AnsiColor.*
 
 class TUI(val controller: GameControllerInterface) extends Observer {
   controller.add(this)
-  var gameStarted = false
+  private var gameStarted = false
 
   override def update(e: Event): Unit = {
     println(s"Received event: $e") // Logging

@@ -1,11 +1,13 @@
 package uno.models.gameComponent.gameImp
 
-import play.api.libs.json.*
+import play.api.libs.json._
 import uno.models.cardComponent.ICard
-import uno.models.cardComponent.cardImp.*
-import uno.models.gameComponent.*
+import uno.models.cardComponent.cardImp._
+import uno.models.cardComponent.cardImp.Card._
+import uno.models.gameComponent._
 import uno.models.playerComponent.IPlayer
 import uno.models.playerComponent.playerImp.Player
+import uno.models.playerComponent.playerImp.Player._
 
 import scala.xml.Elem
 
@@ -40,6 +42,17 @@ object Round:
     val currentPlayer = (node \ "currentPlayer").text.toInt
     Round(players, topCard, currentPlayer)
 
-  implicit val roundFormat: Format[IRound] = Json.format[IRound]
-  implicit val roundReads: Reads[IRound] = Json.reads[IRound]
-  implicit val roundWrites: Writes[IRound] = Json.writes[IRound]
+  implicit val roundFormat: Format[IRound] = new Format[IRound]:
+    def writes(round: IRound): JsValue =
+      Json.obj(
+        "players" -> Json.toJson(round.players),
+        "topCard" -> Json.toJson(round.topCard),
+        "currentPlayer" -> Json.toJson(round.currentPlayer)
+      )
+
+    def reads(json: JsValue): JsResult[IRound] =
+      for
+        players <- (json \ "players").validate[List[IPlayer]]
+        topCard <- (json \ "topCard").validate[ICard]
+        currentPlayer <- (json \ "currentPlayer").validate[Int]
+      yield Round(players, topCard, currentPlayer)

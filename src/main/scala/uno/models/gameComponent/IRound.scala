@@ -14,5 +14,4 @@ trait IRound {
       currentPlayer: Int = currentPlayer
   ): IRound
   def toXml: scala.xml.Elem
-  implicit val roundWrites: Writes[IRound]
 }

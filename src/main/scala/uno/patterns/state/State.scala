@@ -106,7 +106,7 @@ class CreditsState(gui: GUI, controller: GameControllerInterface) extends State 
   }
 }
 
-class GameState(gui: GUI, controller: GameController) extends State {
+class GameState(gui: GUI, controller: GameControllerInterface) extends State {
   override def display(pane: Pane): Unit = {
     pane.children.clear()
 
