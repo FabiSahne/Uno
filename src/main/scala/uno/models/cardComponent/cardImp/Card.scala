@@ -1,6 +1,7 @@
 package uno.models.cardComponent.cardImp
 
 import com.google.inject.Inject
+import play.api.libs.json._
 import uno.models.cardComponent.ICard
 
 import scala.io.AnsiColor
@@ -12,8 +13,8 @@ enum cardValues:
   case ZERO, ONE, TWO, THREE, FOUR, FIVE, SIX, SEVEN, EIGHT, NINE, SKIP,
     REVERSE, DRAW_TWO, WILD, WILD_DRAW_FOUR
 
-class Card @Inject (color: Option[cardColors], value: cardValues)
-    extends ICard {
+class Card @Inject (color: Option[cardColors], value: cardValues) extends ICard:
+
   def getColor: Option[cardColors] = color
   def getValue: cardValues = value
   def canBePlayedOn(topCard: ICard): Boolean =
@@ -27,7 +28,7 @@ class Card @Inject (color: Option[cardColors], value: cardValues)
           }
       })
 
-  def getColorCode: String = {
+  def getColorCode: String =
     this.getColor match {
       case None                    => AnsiColor.WHITE
       case Some(cardColors.RED)    => AnsiColor.RED
@@ -35,7 +36,6 @@ class Card @Inject (color: Option[cardColors], value: cardValues)
       case Some(cardColors.YELLOW) => AnsiColor.YELLOW
       case Some(cardColors.BLUE)   => AnsiColor.BLUE
     }
-  }
 
   def toXml: scala.xml.Elem =
     <card>
@@ -47,7 +47,36 @@ class Card @Inject (color: Option[cardColors], value: cardValues)
       </value>
     </card>
 
-}
+object Card:
+  def fromXml(node: scala.xml.Node): ICard =
+    val color: Option[cardColors] = (node \ "color").text match {
+      case "" => None
+      case s =>
+        s match {
+          case "RED"    => Some(cardColors.RED)
+          case "GREEN"  => Some(cardColors.GREEN)
+          case "BLUE"   => Some(cardColors.BLUE)
+          case "YELLOW" => Some(cardColors.YELLOW)
+        }
+    }
+    val value = (node \ "value").text match {
+      case "ZERO"           => cardValues.ZERO
+      case "ONE"            => cardValues.ONE
+      case "TWO"            => cardValues.TWO
+      case "THREE"          => cardValues.THREE
+      case "FOUR"           => cardValues.FOUR
+      case "FIVE"           => cardValues.FIVE
+      case "SIX"            => cardValues.SIX
+      case "SEVEN"          => cardValues.SEVEN
+      case "EIGHT"          => cardValues.EIGHT
+      case "NINE"           => cardValues.NINE
+      case "SKIP"           => cardValues.SKIP
+      case "REVERSE"        => cardValues.REVERSE
+      case "DRAW_TWO"       => cardValues.DRAW_TWO
+      case "WILD"           => cardValues.WILD
+      case "WILD_DRAW_FOUR" => cardValues.WILD_DRAW_FOUR
+    }
+    Card(color, value)
 
 def randomColor: cardColors =
   cardColors.values.toList(scala.util.Random.nextInt(cardColors.values.length))
@@ -61,13 +90,10 @@ def randomNormalValue: cardValues =
 def randomWildValue: cardValues =
   List(cardValues.WILD, cardValues.WILD_DRAW_FOUR)(scala.util.Random.nextInt(2))
 
-def randomCard: Card = {
+def randomCard: Card =
   val wildchance = 0.1
-  if (scala.util.Random.nextDouble() < wildchance) {
+  if scala.util.Random.nextDouble() < wildchance then
     Card(None, randomWildValue)
-  } else {
-    Card(Some(randomColor), randomNormalValue)
-  }
-}
+  else Card(Some(randomColor), randomNormalValue)
 
 def randomCards(n: Int): List[Card] = List.fill(n)(randomCard)
