@@ -54,7 +54,7 @@ case class WildStrategy() extends CardStrategy {
 //    val new_card = cardTypeImp.WildCard(color, WILD)
     val new_card = Card(color, WILD)
     gameController.round = gameController.round.copy(topCard = new_card)
-    println("Wild command executed")
+    // println("Wild command executed")
 }
 
 case class WildDrawFourStrategy() extends CardStrategy {

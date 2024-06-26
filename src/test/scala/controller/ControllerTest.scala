@@ -29,6 +29,9 @@ class ControllerTest extends AnyWordSpec {
         currentPlayer = 0
       )
     val controller = GameController(round)
+    "retrieve round" in {
+      controller.getRound.topCard.getValue should be(THREE)
+    }
     "play card" in {
       controller.playCard(Card(Some(RED), ONE))
       controller.round.players.head.hand.getCards.size should be(1)
@@ -36,6 +39,16 @@ class ControllerTest extends AnyWordSpec {
     "draw card" in {
       controller.drawCard()
       controller.round.players.head.hand.getCards.size should be(2)
+    }
+    "undo and redo" in {
+      val preUndoRedo = controller.round
+      controller.playCard(Card(Some(RED), TWO))
+      controller.round.topCard.getValue should not be preUndoRedo.topCard.getValue
+      val preUndo = controller.round
+      controller.undo()
+      controller.round.topCard.getValue should be(preUndoRedo.topCard.getValue)
+      controller.redo()
+      controller.round.topCard.getValue should be(preUndo.topCard.getValue)
     }
     "quit game" in {
       class TestObserver(val controller: GameController) extends Observer:
@@ -118,6 +131,73 @@ class ControllerTest extends AnyWordSpec {
       testObserver.bing should be(false)
       controller.quitGame()
       testObserver.bing should be(false)
+    }
+    "handle special cards" in {
+      val round = Round(
+        List(
+          Player(
+            0,
+            Hand(
+              List(
+                Card(Some(RED), DRAW_TWO),
+                Card(Some(RED), REVERSE),
+                Card(Some(RED), SKIP),
+                Card(None, WILD),
+                Card(None, WILD_DRAW_FOUR)
+              )
+            )
+          )
+        ),
+        Card(Some(RED), THREE),
+        currentPlayer = 0
+      )
+      val controller = GameController(round)
+      for card <- round.players.head.hand.getCards do controller.playCard(card)
+      controller.round.players.head.hand.getCards.size should be(2)
+    }
+    "coose color" in {
+      val round = Round(
+        List(
+          Player(
+            0,
+            Hand(
+              List(
+                Card(Some(RED), TWO),
+                Card(Some(RED), THREE)
+              )
+            )
+          )
+        ),
+        Card(None, WILD),
+        currentPlayer = 0
+      )
+      val controller = GameController(round)
+      controller.chooseColor(5)
+      controller.round.topCard.getColor should be(None)
+      controller.chooseColor(1)
+      controller.round.topCard.getColor should be(Some(RED))
+      val newround = Round(
+        List(
+          Player(
+            0,
+            Hand(
+              List(
+                Card(Some(RED), TWO),
+                Card(Some(RED), THREE)
+              )
+            )
+          )
+        ),
+        Card(None, WILD_DRAW_FOUR),
+        currentPlayer = 0
+      )
+      val newcontroller = GameController(newround)
+      newcontroller.chooseColor(2)
+      newcontroller.round.topCard.getColor should be(Some(BLUE))
+      newcontroller.chooseColor(3)
+      newcontroller.round.topCard.getColor should be(Some(GREEN))
+      newcontroller.chooseColor(4)
+      newcontroller.round.topCard.getColor should be(Some(YELLOW))
     }
   }
 }
