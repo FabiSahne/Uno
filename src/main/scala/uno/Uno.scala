@@ -1,10 +1,8 @@
 package uno
 
 import com.google.inject.{Guice, Injector}
-import uno.controller.GControllerImp.GameController
 import uno.controller.GameControllerInterface
 import uno.models.cardComponent.cardImp.*
-import uno.models.fileioComponent.IFileIO
 import uno.models.gameComponent.gameImp.{Hand, Round}
 import uno.models.playerComponent.playerImp.Player
 import uno.views.{GUI, TUI}

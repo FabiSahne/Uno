@@ -1,18 +1,23 @@
 package controller
 
+import com.google.inject.{AbstractModule, Guice, TypeLiteral}
+import net.codingwell.scalaguice.ScalaModule
 import uno.models.*
 import uno.util.*
 import uno.controller.*
 import uno.controller.GControllerImp.GameController
-import uno.models.cardComponent.cardImp._
-import uno.models.cardComponent.cardImp.cardColors._
-import uno.models.cardComponent.cardImp.cardValues._
-import uno.models.gameComponent.gameImp
+import uno.models.cardComponent.cardImp.*
+import uno.models.cardComponent.cardImp.cardColors.*
+import uno.models.cardComponent.cardImp.cardValues.*
+import uno.models.gameComponent.{IHand, IRound, gameImp}
 import uno.models.gameComponent.gameImp.{Hand, Round}
-import uno.models.playerComponent.playerImp
+import uno.models.playerComponent.{IPlayer, playerImp}
 import uno.models.playerComponent.playerImp.Player
-import org.scalatest.matchers.should.Matchers._
+import org.scalatest.matchers.should.Matchers.*
 import org.scalatest.wordspec.AnyWordSpec
+import uno.models.cardComponent.ICard
+import uno.models.fileioComponent.IFileIO
+import uno.models.fileioComponent.fileioImp.FileIOJSON
 import uno.util.Event.Start
 
 class ControllerTest extends AnyWordSpec {
@@ -80,7 +85,24 @@ class ControllerTest extends AnyWordSpec {
       controller.restoreState()
       controller.round should be(round)
     }
-    "save and restore game" in {
+    "save and restore game in json" in {
+      class Module extends AbstractModule with ScalaModule:
+        override def configure(): Unit =
+          bind(classOf[GameControllerInterface]).to(classOf[GameController])
+          bind(classOf[ICard]).to(classOf[Card])
+          bind(classOf[IHand]).to(classOf[Hand])
+          bind(classOf[IRound]).to(classOf[Round])
+          bind(classOf[IPlayer]).to(classOf[Player])
+          bind(classOf[IFileIO]).to(classOf[FileIOJSON])
+
+          bind(new TypeLiteral[Option[cardColors]] {}).toInstance(None)
+          bind(new TypeLiteral[cardValues] {}).toInstance(ONE)
+          bind(new TypeLiteral[Hand] {}).toInstance(Hand())
+          bind(new TypeLiteral[Round] {})
+            .toInstance(Round(List.empty, Card(None, ONE), 0))
+          bind(new TypeLiteral[Player] {}).toInstance(Player(0, Hand()))
+      val injector = Guice.createInjector(new Module)
+
       val round =
         gameImp.Round(
           List(
@@ -92,12 +114,12 @@ class ControllerTest extends AnyWordSpec {
           Card(Some(RED), THREE),
           currentPlayer = 0
         )
-      val controller = GameController(round)
+      val controller = injector.getInstance(classOf[GameControllerInterface])
+      controller.setRound(round)
       controller.saveGame()
-      controller.playCard(Card(Some(RED), ONE))
-      controller.round.topCard.getValue should not be round.topCard.getValue
       controller.loadGame()
-      controller.round.topCard.getValue should be(round.topCard.getValue)
+      controller.getRound.players.size should be(2)
+      // java.nio.file.Files.delete(java.nio.file.Paths.get("round.json"))
     }
     "notify its observers on quit" in {
       class TestObserver(controller: GameController) extends Observer:

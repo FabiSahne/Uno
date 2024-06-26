@@ -1,6 +1,5 @@
 package uno.models.gameComponent
 
-import play.api.libs.json.Writes
 import uno.models.cardComponent.ICard
 import uno.models.playerComponent.IPlayer
 
