@@ -14,7 +14,7 @@ import uno.patterns.memento.*
 import uno.patterns.strategy.*
 import uno.util.*
 
-class GameController @Inject (var round: IRound)
+class GameController @Inject() (var round: IRound)
     extends Observable
     with GameControllerInterface {
   private val caretaker = new Caretaker
@@ -31,7 +31,8 @@ class GameController @Inject (var round: IRound)
 
   def initGame(): Unit = {
     round = Round(
-      players = (0 until 4).map(i => Player(i, Hand(List.fill(7)(randomCard)))).toList,
+      players =
+        (0 until 4).map(i => Player(i, Hand(List.fill(7)(randomCard)))).toList,
       topCard = Card(Some(randomColor), randomNormalValue),
       currentPlayer = 0
     )
