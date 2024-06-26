@@ -105,3 +105,20 @@ class CreditsState(gui: GUI, controller: GameControllerInterface) extends State 
     pane.children = List(menuImageView, creditsText)
   }
 }
+
+class GameState(gui: GUI, controller: GameControllerInterface) extends State {
+  override def display(pane: Pane): Unit = {
+    pane.children.clear()
+
+    val image = new Image(getClass.getResourceAsStream("/field/field.png"))
+    val fieldImageView = new ImageView(image)
+
+    val logo = new Image(getClass.getResourceAsStream("/field/logo.png"))
+    val logoImageView = new ImageView(logo) {
+      layoutX = 0
+      layoutY = 0
+    }
+
+    pane.children = List(fieldImageView, logoImageView)
+  }
+}

@@ -6,6 +6,8 @@ import uno.util.{Event, Observer}
 import uno.util.Event.*
 import javafx.application.Platform
 import uno.controller.GameControllerInterface
+import uno.models.fileioComponent.IFileIO
+import uno.models.fileioComponent.fileioImp.{FileIOJSON, FileIOXML}
 
 import scala.annotation.tailrec
 import scala.io.StdIn
@@ -13,10 +15,10 @@ import scala.io.AnsiColor.*
 
 class TUI(val controller: GameControllerInterface) extends Observer {
   controller.add(this)
-  var gameStarted = false
+  private var gameStarted = false
 
   override def update(e: Event): Unit = {
-    println(s"Received event: $e") // Logging
+    // println(s"Received event: $e") // Logging
     Platform.runLater(() => {
       e match {
         case Quit =>
@@ -65,6 +67,8 @@ class TUI(val controller: GameControllerInterface) extends Observer {
         case Some(1) =>
           controller.initGame()
         case Some(2) =>
+          controller.loadGame()
+        case Some(3) =>
           println("Goodbye!")
           controller.quitGame()
         case _ =>
@@ -81,7 +85,11 @@ class TUI(val controller: GameControllerInterface) extends Observer {
   private def displayMainMenu(): Unit = {
     val boxTopBottom = s"$BLUE" + "=" * 40 + s"$RESET"
     val menuItems =
-      List("1. Start a new game", "2. Exit") // Removed "2. View the rules"
+      List(
+        "1. Start a new game",
+        "2. Load Game",
+        "3. Exit"
+      ) // Removed "2. View the rules"
     val menuString = menuItems.mkString("\n")
 
     println(boxTopBottom)
@@ -97,9 +105,10 @@ class TUI(val controller: GameControllerInterface) extends Observer {
   }
 
   private def gameLoop(): Unit = {
-    println("Entering game loop") // Logging
+    // println("Entering game loop") // Logging
     clearScreen()
-    val currentPlayer = controller.getRound.players(controller.getRound.currentPlayer)
+    val currentPlayer =
+      controller.getRound.players(controller.getRound.currentPlayer)
     println(s"Current player: Player ${controller.getRound.currentPlayer + 1}")
     println(
       s"Current top card: ${controller.getRound.topCard.getColorCode}${controller.getRound.topCard.getValue}$RESET"
@@ -108,7 +117,7 @@ class TUI(val controller: GameControllerInterface) extends Observer {
       println(s"${index + 1}: ${card.getColorCode}${card.getValue}$RESET")
     }
     println(
-      "Enter the number of the card you want to play, or 'u' for undo, 'r' for redo:"
+      "Enter the number of the card you want to play, or 'u' for undo, 'r' for redo, 's' to save game, 'l' to load game:"
     )
 
   }
@@ -119,6 +128,8 @@ class TUI(val controller: GameControllerInterface) extends Observer {
     input match {
       case "u" => controller.undo()
       case "r" => controller.redo()
+      case "s" => controller.saveGame()
+      case "l" => controller.loadGame()
       case _ =>
         val cardNumber = input.toIntOption
         if (cardNumber.isEmpty) {
@@ -176,7 +187,8 @@ class TUI(val controller: GameControllerInterface) extends Observer {
   private def gameOver(): Unit = {
     println("Game over!") // Logging
     clearScreen()
-    val winnerIndex = controller.getRound.players.indexWhere(_.hand.cards.isEmpty)
+    val winnerIndex =
+      controller.getRound.players.indexWhere(_.hand.cards.isEmpty)
     println(s"Player ${winnerIndex + 1} wins!")
   }
 }

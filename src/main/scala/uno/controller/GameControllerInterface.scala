@@ -5,6 +5,7 @@ import uno.models.cardComponent.cardImp.Card
 import uno.util.*
 import uno.controller.GControllerImp
 import uno.models.cardComponent.ICard
+import uno.models.fileioComponent.IFileIO
 import uno.models.gameComponent.IRound
 
 trait GameControllerInterface extends Observable {
@@ -15,6 +16,8 @@ trait GameControllerInterface extends Observable {
   def quitGame(): Unit
   def undo(): Unit
   def redo(): Unit
+  def saveGame(): Unit
+  def loadGame(): Unit
   def playCard(card: ICard): Unit
   def chooseColor(color: Int): Unit
   def drawCard(): Unit

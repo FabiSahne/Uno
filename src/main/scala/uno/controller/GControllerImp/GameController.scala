@@ -1,22 +1,27 @@
 package uno.controller.GControllerImp
 
-import com.google.inject.Inject
+import com.google.inject.{Guice, Inject, Injector}
+import uno.UnoModule
 import uno.controller.GameControllerInterface
 import uno.models.cardComponent.cardImp.*
 import uno.models.gameComponent.IRound
-import uno.models.gameComponent.gameImp.Round
+import uno.models.gameComponent.gameImp.{Hand, Round}
 import uno.models.cardComponent.ICard
+import uno.models.fileioComponent.IFileIO
 import uno.models.playerComponent.playerImp.Player
 import uno.patterns.command.*
 import uno.patterns.memento.*
 import uno.patterns.strategy.*
 import uno.util.*
 
-class GameController @Inject() (var round: IRound)
+class GameController @Inject (var round: IRound)
     extends Observable
     with GameControllerInterface {
   private val caretaker = new Caretaker
   private val undoManager = new UndoManager
+
+  val injector: Injector = Guice.createInjector(new UnoModule)
+  private val fileIO = injector.getInstance(classOf[IFileIO])
 
   def getRound: IRound = round
 
@@ -25,6 +30,11 @@ class GameController @Inject() (var round: IRound)
   }
 
   def initGame(): Unit = {
+    round = Round(
+      players = (0 until 4).map(i => Player(i, Hand(List.fill(7)(randomCard)))).toList,
+      topCard = Card(Some(randomColor), randomNormalValue),
+      currentPlayer = 0
+    )
     notifyObservers(Event.Start)
     startPlay()
   }
@@ -120,11 +130,19 @@ class GameController @Inject() (var round: IRound)
     )
   }
 
-  private def saveState(): Unit = {
-    caretaker.addMemento(Memento(round))
-  }
+  def saveGame(): Unit =
+    fileIO.save(round)
+    notifyObservers(Event.Play)
 
-  def restoreState(): Unit = {
+  def loadGame(): Unit =
+    val load = fileIO.load
+    if load.isSuccess then
+      round = load.get
+      notifyObservers(Event.Play)
+
+  private def saveState(): Unit =
+    caretaker.addMemento(Memento(round))
+
+  def restoreState(): Unit =
     caretaker.getMemento.foreach(memento => round = memento.round)
-  }
 }
