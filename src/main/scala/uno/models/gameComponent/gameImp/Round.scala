@@ -1,18 +1,22 @@
 package uno.models.gameComponent.gameImp
 
-import play.api.libs.json._
+import com.google.inject.Inject
+import play.api.libs.json.*
 import uno.models.cardComponent.ICard
-import uno.models.cardComponent.cardImp._
-import uno.models.cardComponent.cardImp.Card._
-import uno.models.gameComponent._
+import uno.models.cardComponent.cardImp.*
+import uno.models.cardComponent.cardImp.Card.*
+import uno.models.gameComponent.*
 import uno.models.playerComponent.IPlayer
 import uno.models.playerComponent.playerImp.Player
-import uno.models.playerComponent.playerImp.Player._
+import uno.models.playerComponent.playerImp.Player.*
 
 import scala.xml.Elem
 
-case class Round(players: List[IPlayer], topCard: ICard, currentPlayer: Int)
-    extends IRound:
+case class Round @Inject (
+    players: List[IPlayer],
+    topCard: ICard,
+    currentPlayer: Int
+) extends IRound:
 
   def copy(
       players: List[IPlayer] = players,
@@ -38,8 +42,8 @@ object Round:
   def fromXml(node: Elem): IRound =
     val players =
       (node \ "players" \ "player").map(player => Player.fromXml(player)).toList
-    val topCard = Card.fromXml((node \ "topCard").head)
-    val currentPlayer = (node \ "currentPlayer").text.toInt
+    val topCard = Card.fromXml((node \ "topCard" \ "card").head)
+    val currentPlayer = (node \ "currentPlayer").text.trim.toInt
     Round(players, topCard, currentPlayer)
 
   implicit val roundFormat: Format[IRound] = new Format[IRound]:

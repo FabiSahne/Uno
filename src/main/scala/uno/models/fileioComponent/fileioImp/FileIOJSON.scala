@@ -9,14 +9,17 @@ import uno.models.gameComponent.IRound
 import uno.models.gameComponent.gameImp.Round.*
 
 import java.io.PrintWriter
+import scala.util.{Failure, Success, Try}
 
 class FileIOJSON @Inject extends IFileIO:
-  override def load: IRound =
+  override def load: Try[IRound] =
     val source = scala.io.Source.fromFile("round.json")
-    val json = Json.parse(source.getLines.mkString)
+    if source.isEmpty then
+      source.close()
+      return Failure(new Exception("File not found"))
+    val round = Json.parse(source.getLines.mkString).as[IRound]
     source.close()
-    val round = json.as[IRound]
-    round
+    Success(round)
 
   override def save(round: IRound): Unit =
     val file = new PrintWriter("round.json")

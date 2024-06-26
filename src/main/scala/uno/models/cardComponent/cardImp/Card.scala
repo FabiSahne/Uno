@@ -3,7 +3,6 @@ package uno.models.cardComponent.cardImp
 import com.google.inject.Inject
 import play.api.libs.json._
 import play.api.libs.json.Format.GenericFormat
-import play.api.libs.json.OFormat.oFormatFromReadsAndOWrites
 import uno.models.cardComponent.ICard
 
 import scala.io.AnsiColor
@@ -82,17 +81,14 @@ class Card @Inject (color: Option[cardColors], value: cardValues) extends ICard:
 
 object Card:
   def fromXml(node: scala.xml.Node): ICard =
-    val color: Option[cardColors] = (node \ "color").text match {
-      case "" => None
-      case s =>
-        s match {
-          case "RED"    => Some(cardColors.RED)
-          case "GREEN"  => Some(cardColors.GREEN)
-          case "BLUE"   => Some(cardColors.BLUE)
-          case "YELLOW" => Some(cardColors.YELLOW)
-        }
+    val color: Option[cardColors] = (node \ "color").text.trim match {
+      case "None"         => None
+      case "Some(RED)"    => Some(cardColors.RED)
+      case "Some(GREEN)"  => Some(cardColors.GREEN)
+      case "Some(BLUE)"   => Some(cardColors.BLUE)
+      case "Some(YELLOW)" => Some(cardColors.YELLOW)
     }
-    val value = (node \ "value").text match {
+    val value = (node \ "value").text.trim match {
       case "ZERO"           => cardValues.ZERO
       case "ONE"            => cardValues.ONE
       case "TWO"            => cardValues.TWO
@@ -135,22 +131,23 @@ object Card:
           case JsError(e) => JsError(e)
         }
         value <- (json \ "value").validate[String] match {
-          case JsSuccess("ZERO", _)           => JsSuccess(cardValues.ZERO)
-          case JsSuccess("ONE", _)            => JsSuccess(cardValues.ONE)
-          case JsSuccess("TWO", _)            => JsSuccess(cardValues.TWO)
-          case JsSuccess("THREE", _)          => JsSuccess(cardValues.THREE)
-          case JsSuccess("FOUR", _)           => JsSuccess(cardValues.FOUR)
-          case JsSuccess("FIVE", _)           => JsSuccess(cardValues.FIVE)
-          case JsSuccess("SIX", _)            => JsSuccess(cardValues.SIX)
-          case JsSuccess("SEVEN", _)          => JsSuccess(cardValues.SEVEN)
-          case JsSuccess("EIGHT", _)          => JsSuccess(cardValues.EIGHT)
-          case JsSuccess("NINE", _)           => JsSuccess(cardValues.NINE)
-          case JsSuccess("SKIP", _)           => JsSuccess(cardValues.SKIP)
-          case JsSuccess("REVERSE", _)        => JsSuccess(cardValues.REVERSE)
-          case JsSuccess("DRAW_TWO", _)       => JsSuccess(cardValues.DRAW_TWO)
-          case JsSuccess("WILD", _)           => JsSuccess(cardValues.WILD)
-          case JsSuccess("WILD_DRAW_FOUR", _) => JsSuccess(cardValues.WILD_DRAW_FOUR)
-          case JsError(e)                     => JsError(e)
+          case JsSuccess("ZERO", _)     => JsSuccess(cardValues.ZERO)
+          case JsSuccess("ONE", _)      => JsSuccess(cardValues.ONE)
+          case JsSuccess("TWO", _)      => JsSuccess(cardValues.TWO)
+          case JsSuccess("THREE", _)    => JsSuccess(cardValues.THREE)
+          case JsSuccess("FOUR", _)     => JsSuccess(cardValues.FOUR)
+          case JsSuccess("FIVE", _)     => JsSuccess(cardValues.FIVE)
+          case JsSuccess("SIX", _)      => JsSuccess(cardValues.SIX)
+          case JsSuccess("SEVEN", _)    => JsSuccess(cardValues.SEVEN)
+          case JsSuccess("EIGHT", _)    => JsSuccess(cardValues.EIGHT)
+          case JsSuccess("NINE", _)     => JsSuccess(cardValues.NINE)
+          case JsSuccess("SKIP", _)     => JsSuccess(cardValues.SKIP)
+          case JsSuccess("REVERSE", _)  => JsSuccess(cardValues.REVERSE)
+          case JsSuccess("DRAW_TWO", _) => JsSuccess(cardValues.DRAW_TWO)
+          case JsSuccess("WILD", _)     => JsSuccess(cardValues.WILD)
+          case JsSuccess("WILD_DRAW_FOUR", _) =>
+            JsSuccess(cardValues.WILD_DRAW_FOUR)
+          case _ => JsError("Invalid value")
         }
       yield Card(color, value)
 

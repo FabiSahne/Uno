@@ -1,12 +1,15 @@
 package uno.models.gameComponent.gameImp
 
-import play.api.libs.json._
+import com.google.inject.Inject
+import play.api.libs.json.*
 import uno.models.cardComponent.ICard
-import uno.models.cardComponent.cardImp._
-import uno.models.cardComponent.cardImp.Card._
+import uno.models.cardComponent.cardImp.*
+import uno.models.cardComponent.cardImp.Card.*
 import uno.models.gameComponent.IHand
 
-case class Hand(override val cards: List[ICard] = randomCards(7))
+import scala.xml.Elem
+
+case class Hand @Inject (override val cards: List[ICard] = randomCards(7))
     extends IHand(cards):
 
   override def addCard(card: ICard): Hand = copy(cards = card :: cards)
@@ -24,8 +27,8 @@ case class Hand(override val cards: List[ICard] = randomCards(7))
 
 object Hand:
   def fromXml(node: scala.xml.Node): Hand =
-    val cards = (node \ "card").map(card => Card.fromXml(card))
-    Hand(cards.toList)
+    val cardList = (node \ "card").map(card => Card.fromXml(card)).toList
+    Hand(cardList)
     
   implicit val handFormat: Format[IHand] = new Format[IHand]:
     def writes(hand: IHand): JsValue =
@@ -35,5 +38,5 @@ object Hand:
 
     def reads(json: JsValue): JsResult[IHand] =
       for
-        cards <- (json \ "cards").validate[List[ICard]]
-      yield Hand(cards)
+        cardList <- (json \ "cards").validate[List[ICard]]
+      yield Hand(cardList)
