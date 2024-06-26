@@ -1,7 +1,6 @@
 package models
 
 import uno.models.*
-import uno.util.*
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatest.matchers.should.Matchers.*
 import uno.models.cardComponent.cardImp._
@@ -13,6 +12,11 @@ class CardTest extends AnyWordSpec {
     "have a color" in {
       val card = Card(Some(cardColors.RED), cardValues.ZERO)
       card.getColor should be(Some(cardColors.RED))
+    }
+    "have a toString method" in {
+      val card = Card(Some(cardColors.RED), cardValues.ZERO)
+      val expected = s"${AnsiColor.RED}RED, ZERO${AnsiColor.RESET}"
+      card.toString should be(expected)
     }
     "have a value" in {
       val card = Card(Some(cardColors.RED), cardValues.ZERO)

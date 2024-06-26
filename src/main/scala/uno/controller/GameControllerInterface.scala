@@ -1,11 +1,8 @@
 package uno.controller
 
 import uno.models.*
-import uno.models.cardComponent.cardImp.Card
 import uno.util.*
-import uno.controller.GControllerImp
 import uno.models.cardComponent.ICard
-import uno.models.fileioComponent.IFileIO
 import uno.models.gameComponent.IRound
 
 trait GameControllerInterface extends Observable {

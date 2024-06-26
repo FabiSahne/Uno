@@ -17,7 +17,7 @@ import org.scalatest.matchers.should.Matchers.*
 import org.scalatest.wordspec.AnyWordSpec
 import uno.models.cardComponent.ICard
 import uno.models.fileioComponent.IFileIO
-import uno.models.fileioComponent.fileioImp.{FileIOJSON, FileIOXML}
+import uno.models.fileioComponent.fileioImp.FileIOJSON
 import uno.util.Event.Start
 
 class ControllerTest extends AnyWordSpec {

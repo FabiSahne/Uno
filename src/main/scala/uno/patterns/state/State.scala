@@ -5,7 +5,6 @@ import scalafx.scene.image.{Image, ImageView}
 import scalafx.scene.paint.Color
 import scalafx.scene.text.{Font, Text, TextFlow}
 import scalafx.Includes.*
-import uno.controller.GControllerImp.GameController
 import uno.controller.GameControllerInterface
 import uno.views.GUI
 

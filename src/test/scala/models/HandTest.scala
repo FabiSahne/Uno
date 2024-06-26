@@ -4,7 +4,6 @@ import uno.models.*
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatest.matchers.should.Matchers.*
 import uno.models.cardComponent.cardImp._
-import uno.models.cardComponent.cardImp.Card._
 import uno.models.gameComponent.gameImp.Hand
 
 class HandTest extends AnyWordSpec {
