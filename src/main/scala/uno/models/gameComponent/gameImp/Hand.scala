@@ -9,8 +9,9 @@ import uno.models.gameComponent.IHand
 
 import scala.xml.Elem
 
-case class Hand @Inject (override val cards: List[ICard] = randomCards(7))
-    extends IHand(cards):
+case class Hand @Inject() (cards: List[ICard] = randomCards(7)) extends IHand:
+
+  override def getCards: List[ICard] = cards
 
   override def addCard(card: ICard): Hand = copy(cards = card :: cards)
 
@@ -18,7 +19,8 @@ case class Hand @Inject (override val cards: List[ICard] = randomCards(7))
     copy(cards = cardlist ::: cards)
 
   override def removeCard(card: ICard): Hand =
-    copy(cards = cards diff List(card))
+    val toRemove = cards.find(x => x.equals(card)).get
+    copy(cards = cards diff List(toRemove))
 
   override def toXml: scala.xml.Elem =
     <hand>
@@ -29,14 +31,13 @@ object Hand:
   def fromXml(node: scala.xml.Node): Hand =
     val cardList = (node \ "card").map(card => Card.fromXml(card)).toList
     Hand(cardList)
-    
+
   implicit val handFormat: Format[IHand] = new Format[IHand]:
     def writes(hand: IHand): JsValue =
       Json.obj(
-        "cards" -> Json.toJson(hand.cards)
+        "cards" -> Json.toJson(hand.getCards)
       )
 
     def reads(json: JsValue): JsResult[IHand] =
-      for
-        cardList <- (json \ "cards").validate[List[ICard]]
+      for cardList <- (json \ "cards").validate[List[ICard]]
       yield Hand(cardList)

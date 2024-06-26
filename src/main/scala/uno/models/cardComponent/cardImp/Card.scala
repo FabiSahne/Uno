@@ -51,6 +51,7 @@ class Card @Inject (color: Option[cardColors], value: cardValues) extends ICard:
 
   def canBePlayedOn(topCard: ICard): Boolean =
     this.getValue == cardValues.WILD ||
+      this.getValue == topCard.getValue ||
       (this.getColor match {
         case None => true
         case Some(c) =>
@@ -78,6 +79,11 @@ class Card @Inject (color: Option[cardColors], value: cardValues) extends ICard:
         {value}
       </value>
     </card>
+
+  override def equals(obj: Any): Boolean =
+    obj match
+      case c: Card => c.getColor == this.getColor && c.getValue == this.getValue
+      case _       => false
 
 object Card:
   def fromXml(node: scala.xml.Node): ICard =

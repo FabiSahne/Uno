@@ -61,7 +61,7 @@ class GameController @Inject() (var round: IRound)
   def playCard(card: ICard): Unit = {
     val newPlayer = round.players(round.currentPlayer).playCard(card).get
     val newPlayers = round.players.updated(round.currentPlayer, newPlayer)
-    if (newPlayer.hand.cards.isEmpty) {
+    if (newPlayer.hand.getCards.isEmpty) {
       quitGame()
       return
     }
@@ -141,7 +141,7 @@ class GameController @Inject() (var round: IRound)
       round = load.get
       notifyObservers(Event.Play)
 
-  private def saveState(): Unit =
+  def saveState(): Unit =
     caretaker.addMemento(Memento(round))
 
   def restoreState(): Unit =
