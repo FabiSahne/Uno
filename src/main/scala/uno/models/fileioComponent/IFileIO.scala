@@ -4,5 +4,5 @@ import uno.models.gameComponent.IRound
 import scala.util.Try
 
 trait IFileIO:
-  def load: Try[IRound]
+  def load: IRound
   def save(round: IRound): Unit

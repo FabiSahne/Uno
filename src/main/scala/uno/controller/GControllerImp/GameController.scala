@@ -136,10 +136,8 @@ class GameController @Inject() (var round: IRound)
     notifyObservers(Event.Play)
 
   def loadGame(): Unit =
-    val load = fileIO.load
-    if load.isSuccess then
-      round = load.get
-      notifyObservers(Event.Play)
+    round = fileIO.load
+    notifyObservers(Event.Play)
 
   def saveState(): Unit =
     caretaker.addMemento(Memento(round))
