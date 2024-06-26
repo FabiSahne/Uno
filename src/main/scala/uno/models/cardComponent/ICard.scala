@@ -8,3 +8,4 @@ trait ICard:
   def getColorCode: String
   def canBePlayedOn(topCard: ICard): Boolean
   def toXml: scala.xml.Elem
+  def equals(obj: Any): Boolean

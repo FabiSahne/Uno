@@ -22,7 +22,7 @@ class TUI(val controller: GameControllerInterface) extends Observer {
     Platform.runLater(() => {
       e match {
         case Quit =>
-          if (controller.getRound.players.exists(_.hand.cards.nonEmpty)) {
+          if (controller.getRound.players.exists(_.hand.getCards.nonEmpty)) {
             // Game was quit prematurely, do not call gameOver()
           } else {
             // Game ended naturally, call gameOver()
@@ -113,7 +113,7 @@ class TUI(val controller: GameControllerInterface) extends Observer {
     println(
       s"Current top card: ${controller.getRound.topCard.getColorCode}${controller.getRound.topCard.getValue}$RESET"
     )
-    currentPlayer.hand.cards.zipWithIndex.foreach { case (card, index) =>
+    currentPlayer.hand.getCards.zipWithIndex.foreach { case (card, index) =>
       println(s"${index + 1}: ${card.getColorCode}${card.getValue}$RESET")
     }
     println(
@@ -140,7 +140,7 @@ class TUI(val controller: GameControllerInterface) extends Observer {
         } else {
           val currentPlayer =
             controller.getRound.players(controller.getRound.currentPlayer)
-          handleGameMenuInput(cardNumber.get, currentPlayer.hand.cards.length)
+          handleGameMenuInput(cardNumber.get, currentPlayer.hand.getCards.length)
         }
     }
 
@@ -153,7 +153,7 @@ class TUI(val controller: GameControllerInterface) extends Observer {
       val card = controller.getRound
         .players(controller.getRound.currentPlayer)
         .hand
-        .cards(input - 1)
+        .getCards(input - 1)
       if (
         controller.getRound
           .players(controller.getRound.currentPlayer)
@@ -188,7 +188,7 @@ class TUI(val controller: GameControllerInterface) extends Observer {
     println("Game over!") // Logging
     clearScreen()
     val winnerIndex =
-      controller.getRound.players.indexWhere(_.hand.cards.isEmpty)
+      controller.getRound.players.indexWhere(_.hand.getCards.isEmpty)
     println(s"Player ${winnerIndex + 1} wins!")
   }
 }

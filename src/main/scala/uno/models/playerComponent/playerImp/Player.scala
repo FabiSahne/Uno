@@ -13,7 +13,7 @@ import scala.util.{Failure, Success, Try}
 case class Player @Inject (id: Int, hand: IHand) extends IPlayer:
 
   override def canPlay(card: ICard): Boolean =
-    hand.cards.exists(_.canBePlayedOn(card))
+    hand.getCards.exists(_.canBePlayedOn(card))
 
   def playCard(card: ICard): Try[IPlayer] =
     if (canPlay(card)) {
