@@ -50,6 +50,7 @@ class RoundTest extends AnyWordSpec {
       roundFromXml.topCard.getValue should be(TWO)
     }
     "be saved as json" in {
+      Thread.sleep(1000)
       val fileIOJSON = new FileIOJSON
       fileIOJSON.save(round)
       val roundFromJson = fileIOJSON.load
