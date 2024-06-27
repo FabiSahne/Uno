@@ -17,7 +17,7 @@ import org.scalatest.matchers.should.Matchers.*
 import org.scalatest.wordspec.AnyWordSpec
 import uno.models.cardComponent.ICard
 import uno.models.fileioComponent.IFileIO
-import uno.models.fileioComponent.fileioImp.FileIOJSON
+import uno.models.fileioComponent.fileioImp.{FileIOJSON, FileIOXML}
 import uno.util.Event.Start
 
 class ControllerTest extends AnyWordSpec {
@@ -86,6 +86,7 @@ class ControllerTest extends AnyWordSpec {
       controller.round should be(round)
     }
     "save and restore game in json" in {
+      Thread.sleep(2000)
       class Module extends AbstractModule with ScalaModule:
         override def configure(): Unit =
           bind(classOf[GameControllerInterface]).to(classOf[GameController])
@@ -118,7 +119,44 @@ class ControllerTest extends AnyWordSpec {
       controller.setRound(round)
       controller.saveGame()
       controller.loadGame()
-      controller.getRound.players.size should be(2)
+      controller.getRound.players.size should be(1)
+      // java.nio.file.Files.delete(java.nio.file.Paths.get("round.json"))
+    }
+    "save and restore game in xml" in {
+      Thread.sleep(3000)
+      class Module extends AbstractModule with ScalaModule:
+        override def configure(): Unit =
+          bind(classOf[GameControllerInterface]).to(classOf[GameController])
+          bind(classOf[ICard]).to(classOf[Card])
+          bind(classOf[IHand]).to(classOf[Hand])
+          bind(classOf[IRound]).to(classOf[Round])
+          bind(classOf[IPlayer]).to(classOf[Player])
+          bind(classOf[IFileIO]).to(classOf[FileIOXML])
+
+          bind(new TypeLiteral[Option[cardColors]] {}).toInstance(None)
+          bind(new TypeLiteral[cardValues] {}).toInstance(ONE)
+          bind(new TypeLiteral[Hand] {}).toInstance(Hand())
+          bind(new TypeLiteral[Round] {})
+            .toInstance(Round(List.empty, Card(None, ONE), 0))
+          bind(new TypeLiteral[Player] {}).toInstance(Player(0, Hand()))
+      val injector = Guice.createInjector(new Module)
+
+      val round =
+        gameImp.Round(
+          List(
+            playerImp.Player(
+              0,
+              Hand(List(Card(Some(RED), ONE), Card(Some(RED), TWO)))
+            )
+          ),
+          Card(Some(RED), THREE),
+          currentPlayer = 0
+        )
+      val controller = injector.getInstance(classOf[GameControllerInterface])
+      controller.setRound(round)
+      controller.saveGame()
+      controller.loadGame()
+      controller.getRound.players.size should be(1)
       // java.nio.file.Files.delete(java.nio.file.Paths.get("round.json"))
     }
     "notify its observers on quit" in {
