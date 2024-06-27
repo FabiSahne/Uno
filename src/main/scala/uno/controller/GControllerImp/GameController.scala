@@ -14,7 +14,7 @@ import uno.patterns.memento.*
 import uno.patterns.strategy.*
 import uno.util.*
 
-class GameController @Inject (var round: IRound)
+class GameController @Inject() (var round: IRound)
     extends Observable
     with GameControllerInterface {
   private val caretaker = new Caretaker
@@ -31,7 +31,8 @@ class GameController @Inject (var round: IRound)
 
   def initGame(): Unit = {
     round = Round(
-      players = (0 until 4).map(i => Player(i, Hand(List.fill(7)(randomCard)))).toList,
+      players =
+        (0 until 4).map(i => Player(i, Hand(List.fill(7)(randomCard)))).toList,
       topCard = Card(Some(randomColor), randomNormalValue),
       currentPlayer = 0
     )
@@ -60,7 +61,7 @@ class GameController @Inject (var round: IRound)
   def playCard(card: ICard): Unit = {
     val newPlayer = round.players(round.currentPlayer).playCard(card).get
     val newPlayers = round.players.updated(round.currentPlayer, newPlayer)
-    if (newPlayer.hand.cards.isEmpty) {
+    if (newPlayer.hand.getCards.isEmpty) {
       quitGame()
       return
     }
@@ -135,12 +136,10 @@ class GameController @Inject (var round: IRound)
     notifyObservers(Event.Play)
 
   def loadGame(): Unit =
-    val load = fileIO.load
-    if load.isSuccess then
-      round = load.get
-      notifyObservers(Event.Play)
+    round = fileIO.load
+    notifyObservers(Event.Play)
 
-  private def saveState(): Unit =
+  def saveState(): Unit =
     caretaker.addMemento(Memento(round))
 
   def restoreState(): Unit =

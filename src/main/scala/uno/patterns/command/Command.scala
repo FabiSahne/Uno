@@ -1,10 +1,7 @@
 package uno.patterns.command
 
-import uno.controller.GControllerImp.GameController
 import uno.controller.GameControllerInterface
 import uno.models.gameComponent.IRound
-import uno.models.gameComponent.gameImp.Round
-import uno.patterns.memento.Memento
 
 trait Command {
   def undo(gameController: GameControllerInterface, round: IRound): Unit
