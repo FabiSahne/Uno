@@ -1,5 +1,5 @@
 package uno.patterns.memento
 
-import uno.models.Round
+import uno.models.gameComponent.IRound
 
-case class Memento(round: Round)
+case class Memento(round: IRound)

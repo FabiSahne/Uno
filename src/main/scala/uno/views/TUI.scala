@@ -1,28 +1,56 @@
 package uno.views
 
+import uno.controller.GControllerImp.GameController
 import uno.models.*
 import uno.util.{Event, Observer}
-import uno.controller.GameController
 import uno.util.Event.*
+import javafx.application.Platform
+import uno.controller.GameControllerInterface
+import uno.models.fileioComponent.IFileIO
+import uno.models.fileioComponent.fileioImp.{FileIOJSON, FileIOXML}
 
 import scala.annotation.tailrec
 import scala.io.StdIn
 import scala.io.AnsiColor.*
 
-class TUI(val controller: GameController) extends Observer {
+class TUI(val controller: GameControllerInterface) extends Observer {
   controller.add(this)
+  private var gameStarted = false
 
-  override def update(e: Event): Unit =
-    e match {
-      case Quit =>
-        if (controller.round.players.exists(_.hand.cards.nonEmpty)) {
-          // Game was quit prematurely, do not call gameOver()
-        } else {
-          // Game ended naturally, call gameOver()
-          gameOver()
-        }
-      case _ => gameLoop()
+  override def update(e: Event): Unit = {
+    // println(s"Received event: $e") // Logging
+    Platform.runLater(() => {
+      e match {
+        case Quit =>
+          if (controller.getRound.players.exists(_.hand.getCards.nonEmpty)) {
+            // Game was quit prematurely, do not call gameOver()
+          } else {
+            // Game ended naturally, call gameOver()
+            gameOver()
+          }
+        case ChooseColor => chooseColor()
+        case Play        => gameLoop()
+        case Start       => gameStarted = true
+        case _           => ()
+      }
+    })
+  }
+
+  @tailrec
+  private def chooseColor(): Unit = {
+    println("Choose a color:")
+    println("1: Red")
+    println("2: Blue")
+    println("3: Green")
+    println("4: Yellow")
+    val selection = StdIn.readLine().toIntOption.getOrElse(-1)
+    if (selection < 1 || selection > 4) {
+      println("Invalid input. Please enter a number between 1 and 4.")
+      chooseColor()
+    } else {
+      controller.chooseColor(selection)
     }
+  }
 
   def startGame(): Unit = {
     clearScreen()
@@ -32,21 +60,36 @@ class TUI(val controller: GameController) extends Observer {
 
     val selection = StdIn.readLine().toIntOption
 
-    selection match {
-      case Some(1) =>
-        controller.initGame()
-      case Some(2) =>
-        println("Goodbye!")
-        controller.quitGame()
-      case _ =>
-        println("Invalid input. Please enter a number between 1 and 2.") // Adjusted the number range
-        startGame()
+    if (gameStarted) {
+      println("Game already started. Please reenter your input.")
+    } else {
+      selection match {
+        case Some(1) =>
+          controller.initGame()
+        case Some(2) =>
+          controller.loadGame()
+        case Some(3) =>
+          println("Goodbye!")
+          controller.quitGame()
+        case _ =>
+          println(
+            "Invalid input. Please enter a number between 1 and 2."
+          ) // Adjusted the number range
+          startGame()
+      }
     }
+
+    inputLoop()
   }
 
   private def displayMainMenu(): Unit = {
     val boxTopBottom = s"$BLUE" + "=" * 40 + s"$RESET"
-    val menuItems = List("1. Start a new game", "2. Exit") // Removed "2. View the rules"
+    val menuItems =
+      List(
+        "1. Start a new game",
+        "2. Load Game",
+        "3. Exit"
+      ) // Removed "2. View the rules"
     val menuString = menuItems.mkString("\n")
 
     println(boxTopBottom)
@@ -61,32 +104,61 @@ class TUI(val controller: GameController) extends Observer {
     println(boxTopBottom)
   }
 
-  @tailrec
   private def gameLoop(): Unit = {
+    // println("Entering game loop") // Logging
     clearScreen()
-    val currentPlayer = controller.round.players(controller.round.currentPlayer)
-    println(s"Current player: Player ${controller.round.currentPlayer + 1}")
-    println(s"Current top card: ${controller.round.topCard.getColorCode}${controller.round.topCard.getValue}$RESET")
-    currentPlayer.hand.cards.zipWithIndex.foreach { case (card, index) =>
+    val currentPlayer =
+      controller.getRound.players(controller.getRound.currentPlayer)
+    println(s"Current player: Player ${controller.getRound.currentPlayer + 1}")
+    println(
+      s"Current top card: ${controller.getRound.topCard.getColorCode}${controller.getRound.topCard.getValue}$RESET"
+    )
+    currentPlayer.hand.getCards.zipWithIndex.foreach { case (card, index) =>
       println(s"${index + 1}: ${card.getColorCode}${card.getValue}$RESET")
     }
-    println("Enter the number of the card you want to play:")
-    val cardNumber = StdIn.readLine().toIntOption
-    if (cardNumber.isEmpty) {
-      println("Invalid input. Please enter a number.")
-      gameLoop()
-    } else {
-      handleGameMenuInput(cardNumber.get, currentPlayer.hand.cards.length)
-    }
+    println(
+      "Enter the number of the card you want to play, or 'u' for undo, 'r' for redo, 's' to save game, 'l' to load game:"
+    )
+
   }
 
+  @tailrec
+  final def inputLoop(): Unit =
+    val input = StdIn.readLine()
+    input match {
+      case "u" => controller.undo()
+      case "r" => controller.redo()
+      case "s" => controller.saveGame()
+      case "l" => controller.loadGame()
+      case _ =>
+        val cardNumber = input.toIntOption
+        if (cardNumber.isEmpty) {
+          println(
+            "Invalid input. Please enter a number, 'u' for undo, or 'r' for redo."
+          )
+          inputLoop()
+        } else {
+          val currentPlayer =
+            controller.getRound.players(controller.getRound.currentPlayer)
+          handleGameMenuInput(cardNumber.get, currentPlayer.hand.getCards.length)
+        }
+    }
+
   private def handleGameMenuInput(input: Int, handSize: Int): Unit = {
+    println(s"Handling game menu input: $input") // Logging
     if (input < 1 || input > handSize) {
       println("Invalid card number. Please try again.")
       gameLoop()
     } else {
-      val card = controller.round.players(controller.round.currentPlayer).hand.cards(input - 1)
-      if (controller.round.players(controller.round.currentPlayer).canPlay(card) && card.canBePlayedOn(controller.round.topCard)) {
+      val card = controller.getRound
+        .players(controller.getRound.currentPlayer)
+        .hand
+        .getCards(input - 1)
+      if (
+        controller.getRound
+          .players(controller.getRound.currentPlayer)
+          .canPlay(card) && card.canBePlayedOn(controller.getRound.topCard)
+      ) {
         controller.playCard(card)
       } else {
         println("You can't play that card. Do you want to draw, or try again?")
@@ -113,9 +185,10 @@ class TUI(val controller: GameController) extends Observer {
   }
 
   private def gameOver(): Unit = {
+    println("Game over!") // Logging
     clearScreen()
-    println("Game over!")
-    val winnerIndex = controller.round.players.indexWhere(_.hand.cards.isEmpty)
+    val winnerIndex =
+      controller.getRound.players.indexWhere(_.hand.getCards.isEmpty)
     println(s"Player ${winnerIndex + 1} wins!")
   }
 }
