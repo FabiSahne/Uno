@@ -10,10 +10,10 @@ import uno.views.{GUI, TUI}
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-@main def main(): Unit = {
+@main def main(): Unit =
   val injector: Injector = Guice.createInjector(new UnoModule)
   val controller = injector.getInstance(classOf[GameControllerInterface])
-  
+
   val players = List(Player(0, Hand(List())))
   val topCard = randomCard
   val currentPlayer = 0
@@ -27,7 +27,5 @@ import scala.concurrent.Future
   val tui = new TUI(controller)
 
   tui.startGame()
-  
-  while true do
-    tui.inputLoop()
-}
+
+  while true do tui.inputLoop()
