@@ -29,10 +29,11 @@ class GameController @Inject() (var round: IRound)
     this.round = round
   }
 
-  def initGame(): Unit = {
+  def initGame(playerCount: Int): Unit = {
     round = Round(
-      players =
-        (0 until 4).map(i => Player(i, Hand(List.fill(7)(randomCard)))).toList,
+      players = (0 until playerCount)
+        .map(i => Player(i, Hand(List.fill(7)(randomCard))))
+        .toList,
       topCard = Card(Some(randomColor), randomNormalValue),
       currentPlayer = 0
     )
@@ -75,9 +76,6 @@ class GameController @Inject() (var round: IRound)
       case cardValues.DRAW_TWO =>
         val strategy = new DrawTwoStrategy
         strategy.execute(this)
-      case cardValues.REVERSE =>
-        val strategy = new ReverseStrategy
-        strategy.execute(this)
       case cardValues.SKIP =>
         val strategy = new SkipStrategy
         strategy.execute(this)
@@ -115,7 +113,7 @@ class GameController @Inject() (var round: IRound)
     val oldRound = round
     round = round.copy(players = newPlayers)
     executeCommand(new PlayCommand, oldRound, round)
-    notifyObservers(Event.Draw)
+    notifyObservers(Event.Play)
   }
 
   private def executeCommand(

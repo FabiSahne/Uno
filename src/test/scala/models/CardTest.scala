@@ -77,7 +77,6 @@ class CardTest extends AnyWordSpec {
         cardValues.EIGHT,
         cardValues.NINE,
         cardValues.SKIP,
-        cardValues.REVERSE,
         cardValues.DRAW_TWO
       ) should contain(normalValue)
       val wildValue = randomWildValue

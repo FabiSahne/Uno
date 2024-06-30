@@ -176,7 +176,7 @@ class ControllerTest extends AnyWordSpec {
         def update(e: Event): Unit = bing = true
       val testObserver = TestObserver(controller)
       testObserver.bing should be(false)
-      controller.initGame()
+      controller.initGame(2)
       testObserver.bing should be(true)
     }
     "don't notify its observers on remove" in {
@@ -200,7 +200,6 @@ class ControllerTest extends AnyWordSpec {
             Hand(
               List(
                 Card(Some(RED), DRAW_TWO),
-                Card(Some(RED), REVERSE),
                 Card(Some(RED), SKIP),
                 Card(None, WILD),
                 Card(None, WILD_DRAW_FOUR)

@@ -20,14 +20,6 @@ case class SkipStrategy() extends CardStrategy {
     )
 }
 
-case class ReverseStrategy() extends CardStrategy {
-  override def execute(
-      gameController: GameController,
-      color: Option[cardColors] = None
-  ): Unit = ()
-  // println("Reverse command executed")
-}
-
 case class DrawTwoStrategy() extends CardStrategy {
   override def execute(
       gameController: GameController,

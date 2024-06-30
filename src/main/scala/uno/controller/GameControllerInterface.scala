@@ -8,7 +8,7 @@ import uno.models.gameComponent.IRound
 trait GameControllerInterface extends Observable {
   def getRound: IRound
   def setRound(round: IRound): Unit
-  def initGame(): Unit
+  def initGame(playerCount: Int): Unit
   def startPlay(): Unit
   def quitGame(): Unit
   def undo(): Unit

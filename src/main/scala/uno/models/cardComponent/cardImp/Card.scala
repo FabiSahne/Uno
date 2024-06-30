@@ -12,7 +12,7 @@ enum cardColors:
 
 enum cardValues:
   case ZERO, ONE, TWO, THREE, FOUR, FIVE, SIX, SEVEN, EIGHT, NINE, SKIP,
-    REVERSE, DRAW_TWO, WILD, WILD_DRAW_FOUR
+    DRAW_TWO, WILD, WILD_DRAW_FOUR
 
 class Card @Inject (color: Option[cardColors], value: cardValues) extends ICard:
 
@@ -80,7 +80,6 @@ object Card:
       case "EIGHT"          => cardValues.EIGHT
       case "NINE"           => cardValues.NINE
       case "SKIP"           => cardValues.SKIP
-      case "REVERSE"        => cardValues.REVERSE
       case "DRAW_TWO"       => cardValues.DRAW_TWO
       case "WILD"           => cardValues.WILD
       case "WILD_DRAW_FOUR" => cardValues.WILD_DRAW_FOUR
@@ -122,7 +121,6 @@ object Card:
           case JsSuccess("EIGHT", _)    => JsSuccess(cardValues.EIGHT)
           case JsSuccess("NINE", _)     => JsSuccess(cardValues.NINE)
           case JsSuccess("SKIP", _)     => JsSuccess(cardValues.SKIP)
-          case JsSuccess("REVERSE", _)  => JsSuccess(cardValues.REVERSE)
           case JsSuccess("DRAW_TWO", _) => JsSuccess(cardValues.DRAW_TWO)
           case JsSuccess("WILD", _)     => JsSuccess(cardValues.WILD)
           case JsSuccess("WILD_DRAW_FOUR", _) =>

@@ -28,4 +28,4 @@ import scala.concurrent.Future
 
   tui.startGame()
 
-  while true do tui.inputLoop()
+  while tui.inputLoop() do ()

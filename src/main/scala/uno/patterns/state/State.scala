@@ -45,7 +45,7 @@ class WelcomeState(gui: GUI, controller: GameControllerInterface) extends State 
           fill = Color.Pink
           onMouseEntered = _ => fill = Color.Bisque
           onMouseExited = _ => fill = Color.Pink
-          onMouseClicked = _ => controller.initGame()
+          onMouseClicked = _ => controller.initGame(2)
         },
         
         new Text("> Exit\n") {
