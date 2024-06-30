@@ -215,7 +215,7 @@ class ControllerTest extends AnyWordSpec {
       for card <- round.players.head.hand.getCards do controller.playCard(card)
       controller.round.players.head.hand.getCards.size should be(2)
     }
-    "coose color" in {
+    "choose color" in {
       val round = Round(
         List(
           Player(

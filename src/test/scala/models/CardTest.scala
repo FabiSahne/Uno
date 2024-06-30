@@ -3,9 +3,11 @@ package models
 import uno.models.*
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatest.matchers.should.Matchers.*
-import uno.models.cardComponent.cardImp._
+import play.api.libs.json._
+import uno.models.cardComponent.cardImp.*
 
 import scala.io.AnsiColor
+import scala.language.postfixOps
 
 class CardTest extends AnyWordSpec {
   "A Card" should {
@@ -85,6 +87,36 @@ class CardTest extends AnyWordSpec {
         cardValues.WILD,
         cardValues.WILD_DRAW_FOUR
       ) should contain(wildValue)
+    }
+    "be able to be played on any card if it has no color" in {
+      val card1 = Card(None, cardValues.ZERO)
+      val card2 = Card(Some(cardColors.BLUE), cardValues.ONE)
+      card1.canBePlayedOn(card2) should be(true)
+    }
+    "not be equal to a non-Card object" in {
+      val card = Card(Some(cardColors.RED), cardValues.ZERO)
+      val nonCardObject = "Not a Card"
+      card.equals(nonCardObject) should be(false)
+    }
+    "throw an error when trying to create a card with an invalid color from JSON" in {
+      val invalidColorJson = Json.obj(
+        "color" -> "INVALID_COLOR",
+        "value" -> "ZERO"
+      )
+      Card.cardFormat.reads(invalidColorJson) match {
+        case JsError(_) => succeed
+        case _ => fail("Expected a JsError")
+      }
+    }
+    "throw an error when trying to create a card with an invalid value from JSON" in {
+      val invalidValueJson = Json.obj(
+        "color" -> "RED",
+        "value" -> "INVALID_VALUE"
+      )
+      Card.cardFormat.reads(invalidValueJson) match {
+        case JsError(_) => succeed
+        case _ => fail("Expected a JsError")
+      }
     }
   }
 }

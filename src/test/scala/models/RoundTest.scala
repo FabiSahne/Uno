@@ -60,6 +60,8 @@ class RoundTest extends AnyWordSpec {
     "be copyable" in {
       val roundCopy = round.copy()
       roundCopy.players.size should be(2)
+      roundCopy.topCard should be(round.topCard)
+      roundCopy.currentPlayer should be(round.currentPlayer)
     }
   }
 }
