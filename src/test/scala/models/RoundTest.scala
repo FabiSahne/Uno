@@ -25,7 +25,6 @@ class RoundTest extends AnyWordSpec {
           Card(Some(RED), EIGHT),
           Card(Some(RED), NINE),
           Card(Some(RED), SKIP),
-          Card(Some(RED), REVERSE),
           Card(Some(RED), DRAW_TWO),
           Card(None, WILD),
           Card(None, WILD_DRAW_FOUR)

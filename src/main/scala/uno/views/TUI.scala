@@ -16,18 +16,13 @@ import scala.io.AnsiColor.*
 class TUI(val controller: GameControllerInterface) extends Observer {
   controller.add(this)
   private var gameStarted = false
+  private var gameIsOver = false
 
   override def update(e: Event): Unit = {
     // println(s"Received event: $e") // Logging
     Platform.runLater(() => {
       e match {
-        case Quit =>
-          if (controller.getRound.players.exists(_.hand.getCards.nonEmpty)) {
-            // Game was quit prematurely, do not call gameOver()
-          } else {
-            // Game ended naturally, call gameOver()
-            gameOver()
-          }
+        case Quit        => gameIsOver = true; gameOver()
         case ChooseColor => chooseColor()
         case Play        => gameLoop()
         case Start       => gameStarted = true
@@ -65,7 +60,8 @@ class TUI(val controller: GameControllerInterface) extends Observer {
     } else {
       selection match {
         case Some(1) =>
-          controller.initGame()
+          val playerCount = askPlayerCount()
+          controller.initGame(playerCount)
         case Some(2) =>
           controller.loadGame()
         case Some(3) =>
@@ -80,6 +76,18 @@ class TUI(val controller: GameControllerInterface) extends Observer {
     }
 
     inputLoop()
+  }
+
+  @tailrec
+  private def askPlayerCount(): Int = {
+    println("How many players are there? (2-10)")
+    val playerCount = StdIn.readLine().toIntOption.getOrElse(-1)
+    if (playerCount < 2 || playerCount > 10) {
+      println("Invalid input. Please enter a number between 2 and 10.")
+      askPlayerCount()
+    } else {
+      playerCount
+    }
   }
 
   private def displayMainMenu(): Unit = {
@@ -117,35 +125,41 @@ class TUI(val controller: GameControllerInterface) extends Observer {
       println(s"${index + 1}: ${card.getColorCode}${card.getValue}$RESET")
     }
     println(
-      "Enter the number of the card you want to play, or 'u' for undo, 'r' for redo, 's' to save game, 'l' to load game:"
+      "Enter the number of the card you want to play, or 'u' for undo, 'r' for redo, 's' to save game, 'l' to load game, 'q' to quit game:"
     )
 
   }
 
   @tailrec
-  final def inputLoop(): Unit =
+  final def inputLoop(): Boolean =
+    if gameIsOver then return false
     val input = StdIn.readLine()
     input match {
       case "u" => controller.undo()
       case "r" => controller.redo()
       case "s" => controller.saveGame()
       case "l" => controller.loadGame()
+      case "q" => controller.quitGame()
       case _ =>
         val cardNumber = input.toIntOption
         if (cardNumber.isEmpty) {
           println(
-            "Invalid input. Please enter a number, 'u' for undo, or 'r' for redo."
+            "Invalid input. Please enter a number, 'u' for undo, or 'r' for redo, 's' to save game, 'l' to load game, 'q' to quit game:"
           )
-          inputLoop()
+          return inputLoop()
         } else {
           val currentPlayer =
             controller.getRound.players(controller.getRound.currentPlayer)
-          handleGameMenuInput(cardNumber.get, currentPlayer.hand.getCards.length)
+          handleGameMenuInput(
+            cardNumber.get,
+            currentPlayer.hand.getCards.length
+          )
         }
     }
+    true
 
   private def handleGameMenuInput(input: Int, handSize: Int): Unit = {
-    println(s"Handling game menu input: $input") // Logging
+    // println(s"Handling game menu input: $input") // Logging
     if (input < 1 || input > handSize) {
       println("Invalid card number. Please try again.")
       gameLoop()
@@ -187,8 +201,10 @@ class TUI(val controller: GameControllerInterface) extends Observer {
   private def gameOver(): Unit = {
     println("Game over!") // Logging
     clearScreen()
-    val winnerIndex =
-      controller.getRound.players.indexWhere(_.hand.getCards.isEmpty)
-    println(s"Player ${winnerIndex + 1} wins!")
+    if controller.getRound.players.exists(_.hand.getCards.isEmpty) then
+      val winnerIndex =
+        controller.getRound.players.indexWhere(_.hand.getCards.isEmpty)
+      println(s"Player ${winnerIndex + 1} wins!")
+    else println("No winner found.")
   }
 }
